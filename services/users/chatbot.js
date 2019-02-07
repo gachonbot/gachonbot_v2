@@ -62,19 +62,14 @@ function schoolfood (req, res) {
               ],
               "quickReplies": [
                   {
-                    "type": "url",
+                    "action": "message",
                     "label": "홈페이지",
-                    "message": "홈페이지 이동하기",
-                    "data": {
-                      "url":"http://www.gachon.ac.kr"
-                    }
+                    "messageText": "가자"
                   },
                   {
-                    "type": "text",
-                    "label": "학식보기",
-                    "message": "학식",
-                    "data": {
-                    }
+                    "action": "message",
+                    "label": "학식",
+                    "messageText": "학식 보여줘"
                   }
               ]
           }
