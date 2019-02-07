@@ -8,7 +8,7 @@ require('dotenv').config();
 var app = require('../app');
 var debug = require('debug')('gachonbot:server');
 var http = require('http');
-const syncDatabase = require('./database');
+const syncDatabase = require('../database');
 
 /**
  * Get port from environment and store in Express.
