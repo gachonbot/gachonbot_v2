@@ -15,7 +15,7 @@ console.log('apis/users/index.js called');
 // router.use(chatbotService.checkTokenVerified);
 router.get('/test', chatbotService.test);
 router.post('/posttest', chatbotService.posttest);
-
+router.post('/schoolfood', chatbotService.schoolfood);
 // router.use('/*', models.verifyAPIKEY); //현재 미사용
 // ^Middleware. Make sure to put all the routes which needs authentication below this middleware.
 
