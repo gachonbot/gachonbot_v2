@@ -51,7 +51,6 @@ const Food = sequelize.define('food', {
 
 module.exports = {
     sequelize: sequelize,
-    User: User,
     Major: Major,
     Food: Food,
 };
