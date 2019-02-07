@@ -50,26 +50,43 @@ function schoolfood (req, res) {
 
       let foodResult = $(dayString).text();
 
-      return res.status(200).json({
-          "version": "2.0",
-          "template": {
-              "outputs": [
-                  {
-                      "simpleText": {
-                          "text": foodResult
-                      }
-                  }
-              ]
-          }
-      });
       // return res.status(200).json({
-      //   "contents": [
-      //       {
-      //         "type": "text",
-      //         "text": foodResult
-      //       }
-      //     ]
+      //     "version": "2.0",
+      //     "template": {
+      //         "outputs": [
+      //             {
+      //                 "simpleText": {
+      //                     "text": foodResult
+      //                 }
+      //             }
+      //         ]
+      //     }
       // });
+      return res.status(200).json({
+        "contents": [
+            {
+              "type": "text",
+              "text": foodResult
+            }
+          ],
+        "quickReplies": [
+            {
+              "type": "url",
+              "label": "홈페이지",
+              "message": "홈페이지 이동하기",
+              "data": {
+                "url":"http://www.gachon.ac.kr"
+              }
+            },
+            {
+              "type": "text",
+              "label": "학식보기",
+              "message": "학식",
+              "data": {
+              }
+            }
+        ]
+      });
 
   });
 }
