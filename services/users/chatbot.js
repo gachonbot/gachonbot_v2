@@ -424,6 +424,134 @@ function scholarParse (req, res) {
   });
 }
 
+function foodRanking (req, res) {
+
+  models.Food.findAll({
+      order: [
+          // Will escape username and validate DESC against a list of valid direction parameters
+          ['like', 'DESC']
+      ]
+  }).then(food => {
+      if (food){
+          return res.status(200).json({
+            "version": "2.0",
+            "template": {
+              "outputs": [
+                {
+                  "carousel": {
+                    "type": "basicCard",
+                    "items": [
+                      {
+                        "title": `${food[0].name}`,
+                        "description": `${food[0].detail}`,
+                        "thumbnail": {
+                          "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                        },
+                        "buttons": [
+                          {
+                            "action": "phone",
+                            "label": "전화걸기",
+                            "phoneNumber": `${food[0].number}`
+                          },
+                          {
+                            "action":  "webLink",
+                            "label": "위치보기",
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[0].name}&tab=1`
+                          }
+                        ]
+                      },
+                      {
+                        "title": `${food[1].name}`,
+                        "description": `${food[1].detail}`,
+                        "thumbnail": {
+                          "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                        },
+                        "buttons": [
+                          {
+                            "action": "phone",
+                            "label": "전화걸기",
+                            "phoneNumber": `${food[1].number}`
+                          },
+                          {
+                            "action":  "webLink",
+                            "label": "위치보기",
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[1].name}&tab=1`
+                          }
+                        ]
+                      },
+                      {
+                        "title": `${food[2].name}`,
+                        "description": `${food[2].detail}`,
+                        "thumbnail": {
+                          "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                        },
+                        "buttons": [
+                          {
+                            "action": "phone",
+                            "label": "전화걸기",
+                            "phoneNumber": `${food[2].number}`
+                          },
+                          {
+                            "action":  "webLink",
+                            "label": "위치보기",
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[2].name}&tab=1`
+                          }
+                        ]
+                      },
+                      {
+                        "title": `${food[3].name}`,
+                        "description": `${food[3].detail}`,
+                        "thumbnail": {
+                          "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                        },
+                        "buttons": [
+                          {
+                            "action": "phone",
+                            "label": "전화걸기",
+                            "phoneNumber": `${food[3].number}`
+                          },
+                          {
+                            "action":  "webLink",
+                            "label": "위치보기",
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[3].name}&tab=1`
+                          }
+                        ]
+                      },
+                      {
+                        "title": `${food[4].name}`,
+                        "description": `${food[4].detail}`,
+                        "thumbnail": {
+                          "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                        },
+                        "buttons": [
+                          {
+                            "action": "phone",
+                            "label": "전화걸기",
+                            "phoneNumber": `${food[4].number}`
+                          },
+                          {
+                            "action":  "webLink",
+                            "label": "위치보기",
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[4].name}&tab=1`
+                          }
+                        ]
+                      },
+                    ]
+                  }
+                }
+              ]
+            }
+          });
+      } else {
+          // Return when no data found
+          return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+      }
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
+
 module.exports = {
     test: test,
     posttest: posttest,
@@ -434,5 +562,6 @@ module.exports = {
     noticeParse: noticeParse,
     scholarParse: scholarParse,
     foodParser: foodParser,
+    foodRanking: foodRanking,
 
 }
