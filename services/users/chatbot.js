@@ -1,5 +1,7 @@
 const client = require('cheerio-httpcli');
 const moment = require('moment');
+const models = require('../../models');
+
 
 const param = {};
 client.set('headers', {           // 크롤링 방지 우회를 위한 User-Agent setting
@@ -432,6 +434,7 @@ function foodRanking (req, res) {
           ['like', 'DESC']
       ]
   }).then(food => {
+      console.log(food);
       if (food){
           return res.status(200).json({
             "version": "2.0",
@@ -456,7 +459,7 @@ function foodRanking (req, res) {
                           {
                             "action":  "webLink",
                             "label": "위치보기",
-                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[0].name}&tab=1`
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[0].name}&tab=1`
                           }
                         ]
                       },
@@ -475,7 +478,7 @@ function foodRanking (req, res) {
                           {
                             "action":  "webLink",
                             "label": "위치보기",
-                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[1].name}&tab=1`
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[1].name}&tab=1`
                           }
                         ]
                       },
@@ -494,7 +497,7 @@ function foodRanking (req, res) {
                           {
                             "action":  "webLink",
                             "label": "위치보기",
-                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[2].name}&tab=1`
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[2].name}&tab=1`
                           }
                         ]
                       },
@@ -513,7 +516,7 @@ function foodRanking (req, res) {
                           {
                             "action":  "webLink",
                             "label": "위치보기",
-                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[3].name}&tab=1`
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[3].name}&tab=1`
                           }
                         ]
                       },
@@ -532,7 +535,7 @@ function foodRanking (req, res) {
                           {
                             "action":  "webLink",
                             "label": "위치보기",
-                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${foods[4].name}&tab=1`
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[4].name}&tab=1`
                           }
                         ]
                       },
