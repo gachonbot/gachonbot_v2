@@ -47,6 +47,7 @@ const Food = sequelize.define('food', {
     number: Sequelize.STRING,
     where: Sequelize.STRING,
     detail: Sequelize.STRING,
+    like: {type: Sequelize.INTEGER, defaultValue: 0},
 });
 
 module.exports = {
