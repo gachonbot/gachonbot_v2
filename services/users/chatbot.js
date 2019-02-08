@@ -27,7 +27,7 @@ function foodParser (req, res) {
       url = 'http://m.gachon.ac.kr/menu/menu.jsp?gubun=B';
     break;
     case '비전타워':
-      'http://m.gachon.ac.kr/menu/menu.jsp?gubun=C';
+      url = 'http://m.gachon.ac.kr/menu/menu.jsp?gubun=C';
     break;
   }
 
