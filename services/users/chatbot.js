@@ -18,6 +18,46 @@ function posttest (req, res) {
   return res.status(200).json({success:true, response: res1});
 }
 
+function foodParser (req, res) {
+  console.log(req.body.userRequest.params);
+  let url = 'http://m.gachon.ac.kr/menu/menu.jsp';
+  const day = moment().day();
+
+  client.fetch(url, param, function(err, $, resp){
+      if(err){
+          console.log(err);
+          return;
+      }
+
+      let foodResult = $(`#toggle-view > li:nth-child(${day}) > dl`).text();
+
+      return res.status(200).json({
+          "version": "2.0",
+          "template": {
+              "outputs": [
+                  {
+                      "simpleText": {
+                          "text": foodResult
+                      }
+                  }
+              ],
+              "quickReplies": [
+                  {
+                    "action": "message",
+                    "label": "홈페이지",
+                    "messageText": "가자"
+                  },
+                  {
+                    "action": "message",
+                    "label": "학식",
+                    "messageText": "학식 보여줘"
+                  }
+              ]
+          }
+      });
+  });
+}
+
 function schoolFoodArt (req, res) {
   console.log(req.body);
   let url = 'http://m.gachon.ac.kr/menu/menu.jsp';
@@ -204,8 +244,8 @@ function libraryRestSeat (req, res) {
   });
 }
 
-function noticeParse (req, res) {
-  let url = 'http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=358';
+function scholarParse (req, res) {
+  let url = 'http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=361';
 
   client.fetch(url, param, function(err, $, resp){
       if(err){
@@ -218,7 +258,7 @@ function noticeParse (req, res) {
         if($(this).children('img').attr('alt') === '공지') {
 
         } else {
-          noticeArray.push({title: $(this).children('a').text().replace(/ /g, '').replace(/\n/g, ' '), url: 'http://m.gachon.ac.kr/gachon/'+$(this).children('a').attr('href'), date: $(this).children('span').text().replace(/ /g, '')});
+          noticeArray.push({title: $(this).children('a').text().trim().replace(/\n/g, ' '), url: 'http://m.gachon.ac.kr/gachon/'+$(this).children('a').attr('href'), date: $(this).children('span').text().replace(/ /g, '')});
         }
       });
 
@@ -229,7 +269,7 @@ function noticeParse (req, res) {
             {
               "listCard": {
                 "header": {
-                  "title": "공지사항",
+                  "title": "장학소식",
                   "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
                 },
                 "items": [
@@ -276,9 +316,9 @@ function noticeParse (req, res) {
                 ],
                 "buttons": [
                   {
-                    "label": "공지사항 더보기",
+                    "label": "장학소식 더보기",
                     "action": "webLink",
-                    "webLinkUrl": "http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=358"
+                    "webLinkUrl": "http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=361"
                   }
                 ]
               }
@@ -297,5 +337,7 @@ module.exports = {
     schoolFoodEdu: schoolFoodEdu,
     libraryRestSeat: libraryRestSeat,
     noticeParse: noticeParse,
+    scholarParse: scholarParse,
+    foodParser: foodParser,
 
 }
