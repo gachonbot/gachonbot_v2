@@ -204,6 +204,91 @@ function libraryRestSeat (req, res) {
   });
 }
 
+function noticeParse (req, res) {
+  let url = 'http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=358';
+
+  client.fetch(url, param, function(err, $, resp){
+      if(err){
+          console.log(err);
+          return;
+      }
+      let noticeArray = [];
+
+      $('#contnet > div.list > ul > li').each(function (idx) {
+        if($(this).children('img').attr('alt') === '공지') {
+
+        } else {
+          noticeArray.push({title: $(this).children('a').text().replace(/ /g, '').replace(/\n/g, ' '), url: 'http://m.gachon.ac.kr/gachon/'+$(this).children('a').attr('href'), date: $(this).children('span').text().replace(/ /g, '')});
+        }
+      });
+
+      return res.status(200).json({
+        "version": "2.0",
+        "template": {
+          "outputs": [
+            {
+              "listCard": {
+                "header": {
+                  "title": "공지사항",
+                  "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
+                },
+                "items": [
+                  {
+                    "title": `${noticeArray[0].title}`,
+                    "description": `${noticeArray[0].date}`,
+                    "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                    "link": {
+                      "web": `${noticeArray[0].url}`
+                    }
+                  },
+                  {
+                    "title": `${noticeArray[1].title}`,
+                    "description": `${noticeArray[1].date}`,
+                    "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                    "link": {
+                      "web": `${noticeArray[1].url}`
+                    }
+                  },
+                  {
+                    "title": `${noticeArray[2].title}`,
+                    "description": `${noticeArray[2].date}`,
+                    "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                    "link": {
+                      "web": `${noticeArray[2].url}`
+                    }
+                  },
+                  {
+                    "title": `${noticeArray[3].title}`,
+                    "description": `${noticeArray[3].date}`,
+                    "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                    "link": {
+                      "web": `${noticeArray[3].url}`
+                    }
+                  },
+                  {
+                    "title": `${noticeArray[4].title}`,
+                    "description": `${noticeArray[4].date}`,
+                    "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                    "link": {
+                      "web": `${noticeArray[4].url}`
+                    }
+                  }
+                ],
+                "buttons": [
+                  {
+                    "label": "공지사항 더보기",
+                    "action": "webLink",
+                    "webLinkUrl": "http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=358"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      });
+  });
+}
+
 module.exports = {
     test: test,
     posttest: posttest,
@@ -211,5 +296,6 @@ module.exports = {
     schoolFoodVision: schoolFoodVision,
     schoolFoodEdu: schoolFoodEdu,
     libraryRestSeat: libraryRestSeat,
+    noticeParse: noticeParse,
 
 }

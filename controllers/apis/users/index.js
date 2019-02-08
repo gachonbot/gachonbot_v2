@@ -18,7 +18,7 @@ router.post('/schoolFoodArt', chatbotService.schoolFoodArt);
 router.post('/schoolFoodEdu', chatbotService.schoolFoodEdu);
 router.post('/schoolFoodVision', chatbotService.schoolFoodVision);
 router.post('/libraryRestSeat', chatbotService.libraryRestSeat);
-
+router.post('/noticeParse', chatbotService.noticeParse);
 // ^Middleware. Make sure to put all the routes which needs authentication below this middleware.
 
 module.exports = router;
