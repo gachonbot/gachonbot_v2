@@ -12,11 +12,13 @@ console.log('apis/users/index.js called');
 /**
  * api/v1/users/
  */
-// router.use(chatbotService.checkTokenVerified);
 router.get('/test', chatbotService.test);
 router.post('/posttest', chatbotService.posttest);
-router.post('/schoolfood', chatbotService.schoolfood);
-// router.use('/*', models.verifyAPIKEY); //현재 미사용
+router.post('/schoolFoodArt', chatbotService.schoolFoodArt);
+router.post('/schoolFoodEdu', chatbotService.schoolFoodEdu);
+router.post('/schoolFoodVision', chatbotService.schoolFoodVision);
+router.post('/libraryRestSeat', chatbotService.libraryRestSeat);
+
 // ^Middleware. Make sure to put all the routes which needs authentication below this middleware.
 
 module.exports = router;
