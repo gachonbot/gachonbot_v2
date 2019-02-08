@@ -19,8 +19,18 @@ function posttest (req, res) {
 }
 
 function foodParser (req, res) {
-  console.log(req.body.userRequest.params);
+  let placeParam = (req.body.action.params.place);
   let url = 'http://m.gachon.ac.kr/menu/menu.jsp';
+
+  switch (placeParam) {
+    case '교육대학원':
+      url = 'http://m.gachon.ac.kr/menu/menu.jsp?gubun=B';
+    break;
+    case '비전타워':
+      'http://m.gachon.ac.kr/menu/menu.jsp?gubun=C';
+    break;
+  }
+
   const day = moment().day();
 
   client.fetch(url, param, function(err, $, resp){
