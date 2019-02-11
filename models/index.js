@@ -50,6 +50,23 @@ const Food = sequelize.define('food', {
     like: {type: Sequelize.INTEGER, defaultValue: 0},
 });
 
+const Air = sequelize.define('air', {
+  pm_10: Sequelize.INTEGER,
+  pm_25: Sequelize.INTEGER,
+  grade_10: Sequelize.INTEGER,
+  grade_25: Sequelize.INTEGER,
+  time: Sequelize.STRING,
+});
+
+const Weather = sequelize.define('weather', {
+  name: Sequelize.STRING,
+  tc: Sequelize.INTEGER,
+  tmin: Sequelize.INTEGER,
+  tmax: Sequelize.INTEGER,
+  humidity: Sequelize.INTEGER,
+  time: Sequelize.STRING,
+});
+
 module.exports = {
     sequelize: sequelize,
     Major: Major,
