@@ -20,10 +20,10 @@ let weather_scheduler = schedule.scheduleJob('1 * * * *', function(){
           response = response.weather.hourly[0];
           models.Weather.create({
             name: response.sky.name,
-            tc: response.temperature.tc,
-            tmin: response.temperature.tc,
-            tmax: response.temperature.tc,
-            humidity: response.humidity,
+            tc: parseFloat(response.temperature.tc),
+            tmin: parseFloat(response.temperature.tmin),
+            tmax: parseFloat(response.temperature.tmax),
+            humidity: parseFloat(response.humidity),
             time: response.timeRelease,
           }).then(result => {
             return result;
@@ -42,10 +42,10 @@ let air_scheduler = schedule.scheduleJob('2 * * * *', function(){
         response = JSON.parse(response);
         response = response.list[0];
         models.Air.create({
-          pm_10: response.pm10Value,
-          pm_25: response.pm25Value,
-          grade_10: response.pm10Grade1h,
-          grade_25: response.pm25Grade1h,
+          pm_10: parseInt(response.pm10Value),
+          pm_25: parseInt(response.pm25Value),
+          grade_10: parseInt(response.pm10Grade1h),
+          grade_25: parseInt(response.pm25Grade1h),
           time: response.dataTime,
         }).then(result => {
           return result;
