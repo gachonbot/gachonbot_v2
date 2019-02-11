@@ -1,12 +1,61 @@
+require('dotenv').config()
 const client = require('cheerio-httpcli');
 const moment = require('moment');
+const schedule = require('node-schedule');
 const models = require('../../models');
+const rp = require('request-promise');
+
 
 
 const param = {};
 client.set('headers', {           // 크롤링 방지 우회를 위한 User-Agent setting
   'data-useragent' : 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36',
   'Accept-Charset': 'utf-8'
+});
+
+let weather_scheduler = schedule.scheduleJob('1 * * * *', function(){
+  rp(`https://api2.sktelecom.com/weather/current/hourly?version=1&lat=37.450745&lon=127.128804&appkey=${process.env.WEATHER_KEY}`)
+      .then(function (response) {
+          response = JSON.parse(response);
+          response = response.weather.hourly[0];
+          models.Weather.create({
+            name: response.sky.name,
+            tc: response.temperature.tc,
+            tmin: response.temperature.tc,
+            tmax: response.temperature.tc,
+            humidity: response.humidity,
+            time: response.timeRelease,
+          }).then(result => {
+            return result;
+          }).catch(err => {
+            return err.message;
+          });
+      })
+      .catch(function (err) {
+          console.log(err);
+      });
+});
+
+let air_scheduler = schedule.scheduleJob('2 * * * *', function(){
+  rp(`http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey=${process.env.AIR_KEY}&numOfRows=1&pageSize=1&pageNo=1&startPage=1&stationName=${encodeURIComponent('상대원동')}&dataTerm=DAILY&ver=1.3&_returnType=json`)
+      .then(function (response) {
+        response = JSON.parse(response);
+        response = response.list[0];
+        models.Air.create({
+          pm_10: response.pm10Value,
+          pm_25: response.pm25Value,
+          grade_10: response.pm10Grade1h,
+          grade_25: response.pm25Grade1h,
+          time: response.dataTime,
+        }).then(result => {
+          return result;
+        }).catch(err => {
+          return err.message;
+        });
+      })
+      .catch(function (err) {
+          console.log(err);
+      });
 });
 
 

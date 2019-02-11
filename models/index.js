@@ -60,10 +60,10 @@ const Air = sequelize.define('air', {
 
 const Weather = sequelize.define('weather', {
   name: Sequelize.STRING,
-  tc: Sequelize.INTEGER,
-  tmin: Sequelize.INTEGER,
-  tmax: Sequelize.INTEGER,
-  humidity: Sequelize.INTEGER,
+  tc: Sequelize.FLOAT,
+  tmin: Sequelize.FLOAT,
+  tmax: Sequelize.FLOAT,
+  humidity: Sequelize.FLOAT,
   time: Sequelize.STRING,
 });
 
