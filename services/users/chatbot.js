@@ -4,6 +4,7 @@ const moment = require('moment');
 const schedule = require('node-schedule');
 const models = require('../../models');
 const rp = require('request-promise');
+const jsonHelper = require('./jsonHelper');
 
 
 
@@ -478,10 +479,11 @@ function scholarParse (req, res) {
 function foodRanking (req, res) {
 
   models.Food.findAll({
-      order: [
-          // Will escape username and validate DESC against a list of valid direction parameters
-          ['like', 'DESC']
-      ]
+    limit: 5,
+    order: [
+        // Will escape username and validate DESC against a list of valid direction parameters
+        ['like', 'DESC']
+    ]
   }).then(food => {
       console.log(food);
       if (food){
@@ -489,6 +491,11 @@ function foodRanking (req, res) {
             "version": "2.0",
             "template": {
               "outputs": [
+                {
+                  "simpleText": {
+                    "text": "좋아요 랭킹 상위 5개 맛집입니다!"
+                  }
+                },
                 {
                   "carousel": {
                     "type": "basicCard",
@@ -603,6 +610,255 @@ function foodRanking (req, res) {
   });
 }
 
+function foodInit (req, res) {
+
+  models.sequelize.query(`SELECT count(*) as count FROM food;`).then(cnt => {
+    return res.status(200).json({
+      "version": "2.0",
+      "template": {
+        "outputs": [
+          {
+            "simpleText": {
+              "text": `현재 ${cnt[0][0].count}개의 음식점이 등록되어있습니다! 원하시는 음식종류를 선택해주세요!`
+            }
+          },
+        ],
+        "quickReplies": [
+            {
+              "action": "block",
+              "label": "한식",
+              "messageText": "한식",
+              "blockId": "5c6173795f38dd5839236bb4",
+              "extra": {
+                "food_type": "한식"
+              }
+            },
+            {
+              "action": "block",
+              "label": "한식2",
+              "messageText": "한식2",
+              "blockId": "5c6173795f38dd5839236bb4",
+              "extra": {
+                "food_type": "한식2"
+              }
+            },
+            {
+              "action": "block",
+              "label": "분식",
+              "messageText": "분식",
+              "blockId": "5c6173795f38dd5839236bb4",
+              "extra": {
+                "food_type": "분식"
+              }
+            },
+            {
+              "action": "block",
+              "label": "일식",
+              "messageText": "일식",
+              "blockId": "5c6173795f38dd5839236bb4",
+              "extra": {
+                "food_type": "일식"
+              }
+            },
+            {
+              "action": "block",
+              "label": "양식",
+              "messageText": "양식",
+              "blockId": "5c6173795f38dd5839236bb4",
+              "extra": {
+                "food_type": "양식"
+              }
+            },
+            {
+              "action": "block",
+              "label": "중식",
+              "messageText": "중식",
+              "blockId": "5c6173795f38dd5839236bb4",
+              "extra": {
+                "food_type": "중식"
+              }
+            },
+            {
+              "action": "block",
+              "label": "돈까스",
+              "messageText": "돈까스",
+              "blockId": "5c6173795f38dd5839236bb4",
+              "extra": {
+                "food_type": "돈까스"
+              }
+            },
+            {
+              "action": "block",
+              "label": "도시락",
+              "messageText": "도시락",
+              "blockId": "5c6173795f38dd5839236bb4",
+              "extra": {
+                "food_type": "도시락"
+              }
+            },
+            {
+              "action": "block",
+              "label": "기타",
+              "messageText": "기타",
+              "blockId": "5c6173795f38dd5839236bb4",
+              "extra": {
+                "food_type": "기타"
+              }
+            },
+        ]
+      }
+    });
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
+function foodByType (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id); //5c6173795f38dd5839236bb4
+  console.log('엑스트라'+req.body.action.clientExtra.food_type); //5c6173795f38dd5839236bb4
+  const food_type = req.body.action.clientExtra.food_type;
+  models.Food.findAll({
+    limit: 10,
+    where: {
+        type: food_type
+    },
+    order: [
+        // Will escape username and validate DESC against a list of valid direction parameters
+        ['like', 'DESC']
+    ]
+  }).then(food => {
+      console.log(food);
+      if (food){
+          return res.status(200).json(jsonHelper.sendCarousel(`가천대 주변의 ${food_type}맛집 리스트입니다! 해당 음식점이름 버튼을 클릭해서 상세정보를 확인해보세요!`, food));
+      } else {
+          // Return when no data found
+          return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+      }
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
+function getWeather (req, res) {
+  models.Weather.findOne({
+    order: [
+        // Will escape username and validate DESC against a list of valid direction parameters
+        ['id', 'DESC']
+    ]
+  }).then(weather => {
+      console.log(weather);
+      if (weather){
+          return res.status(200).json({
+            "version": "2.0",
+            "template": {
+              "outputs": [
+                {
+                  "simpleText": {
+                    "text": `${weather.time} 기준 가천대학교의 날씨입니다!`
+                  }
+                },
+                {
+                  "carousel": {
+                    "type": "basicCard",
+                    "items": [
+                      {
+                        "title": `${weather.name}`,
+                        "description": `현재기온: ${weather.tc} ℃\n오늘의 최저기온: ${weather.tmin} ℃\n오늘의 최고기온: ${weather.tmax} ℃\n습도: ${weather.humidity} %`,
+                        "thumbnail": {
+                          "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                        },
+                      },
+                    ]
+                  }
+                }
+              ],
+              "quickReplies": []
+            }
+          });
+      } else {
+          // Return when no data found
+          return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+      }
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
+function getAir (req, res) {
+  models.Air.findOne({
+    order: [
+        // Will escape username and validate DESC against a list of valid direction parameters
+        ['id', 'DESC']
+    ]
+  }).then(air => {
+      console.log(air);
+      if (air){
+        let pm10grade;
+        let pm25grade;
+        switch (air.grade_10) {
+          case 1:
+            pm10grade = '좋음';
+          break;
+          case 2:
+            pm10grade = '보통';
+          break;
+          case 3:
+            pm10grade = '나쁨';
+          break;
+          case 4:
+            pm10grade = '매우나쁨';
+          break;
+        }
+        switch (air.grade_25) {
+          case 1:
+            pm25grade = '좋음';
+          break;
+          case 2:
+            pm25grade = '보통';
+          break;
+          case 3:
+            pm25grade = '나쁨';
+          break;
+          case 4:
+            pm25grade = '매우나쁨';
+          break;
+        }
+          return res.status(200).json({
+            "version": "2.0",
+            "template": {
+              "outputs": [
+                {
+                  "simpleText": {
+                    "text": `${air.time} 기준 미세먼지 지수입니다!(상대원동 측정소)`
+                  }
+                },
+                {
+                  "carousel": {
+                    "type": "basicCard",
+                    "items": [
+                      {
+                        "title": `${pm10grade}`,
+                        "description": `미세먼지 지수: ${air.pm_10} (pm10)\n\n초미세먼지: ${pm25grade}\n초미세먼지 지수: ${air.pm_25} (pm25)`,
+                        "thumbnail": {
+                          "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                        },
+                      },
+                    ]
+                  }
+                }
+              ],
+              "quickReplies": []
+            }
+          });
+      } else {
+          // Return when no data found
+          return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+      }
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
 
 module.exports = {
     test: test,
@@ -615,5 +871,10 @@ module.exports = {
     scholarParse: scholarParse,
     foodParser: foodParser,
     foodRanking: foodRanking,
+    foodInit: foodInit,
+    foodByType: foodByType,
+    getWeather: getWeather,
+    getAir: getAir,
+
 
 }

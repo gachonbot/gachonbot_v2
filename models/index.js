@@ -44,11 +44,20 @@ const Major = sequelize.define('major', {
 
 const Food = sequelize.define('food', {
     name: Sequelize.STRING,
+    type: Sequelize.STRING,
     number: Sequelize.STRING,
     where: Sequelize.STRING,
     detail: Sequelize.STRING,
     like: {type: Sequelize.INTEGER, defaultValue: 0},
 });
+
+const Food_image = sequelize.define('food_image', {
+    food_name: Sequelize.STRING,
+    url: Sequelize.STRING,
+});
+
+Food.hasMany(Food_image, {foreignKey: 'food_name'});
+Food_image.belongsTo(Food, {foreignKey: 'food_name'});
 
 const Air = sequelize.define('air', {
   pm_10: Sequelize.INTEGER,
@@ -71,4 +80,7 @@ module.exports = {
     sequelize: sequelize,
     Major: Major,
     Food: Food,
+    Air: Air,
+    Weather: Weather,
+    Food_image: Food_image,
 };
