@@ -37,29 +37,47 @@ const sequelize = new Sequelize(
 );
 
 const Major = sequelize.define('major', {
-    name: Sequelize.STRING,
-    number: Sequelize.STRING,
-    notice: Sequelize.STRING,
+  id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+      },
+  name: Sequelize.STRING,
+  number: Sequelize.STRING,
+  notice: Sequelize.STRING,
 });
 
 const Food = sequelize.define('food', {
-    name: Sequelize.STRING,
-    type: Sequelize.STRING,
-    number: Sequelize.STRING,
-    where: Sequelize.STRING,
-    detail: Sequelize.STRING,
-    like: {type: Sequelize.INTEGER, defaultValue: 0},
+  id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+      },
+  name: Sequelize.STRING,
+  type: Sequelize.STRING,
+  number: Sequelize.STRING,
+  where: Sequelize.STRING,
+  detail: Sequelize.STRING,
+  like: {type: Sequelize.INTEGER, defaultValue: 0},
 });
 
 const Food_image = sequelize.define('food_image', {
-    food_name: Sequelize.STRING,
-    url: Sequelize.STRING,
+  id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+      },
+  url: Sequelize.STRING,
 });
 
-Food.hasMany(Food_image, {foreignKey: 'food_name'});
-Food_image.belongsTo(Food, {foreignKey: 'food_name'});
+Food.hasMany(Food_image, {as: 'images'})
 
 const Air = sequelize.define('air', {
+  id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+      },
   pm_10: Sequelize.INTEGER,
   pm_25: Sequelize.INTEGER,
   grade_10: Sequelize.INTEGER,
@@ -68,6 +86,11 @@ const Air = sequelize.define('air', {
 });
 
 const Weather = sequelize.define('weather', {
+  id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+      },
   name: Sequelize.STRING,
   tc: Sequelize.FLOAT,
   tmin: Sequelize.FLOAT,

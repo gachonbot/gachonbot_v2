@@ -26,6 +26,9 @@ router.post('/foodInit', chatbotService.foodInit);
 router.post('/foodByType', chatbotService.foodByType);
 router.post('/getWeather', chatbotService.getWeather);
 router.post('/getAir', chatbotService.getAir);
+router.post('/foodDetail', chatbotService.foodDetail);
+router.post('/foodLike', chatbotService.foodLike);
+router.post('/failLike', chatbotService.failLike);
 // ^Middleware. Make sure to put all the routes which needs authentication below this middleware.
 
 module.exports = router;

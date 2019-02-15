@@ -71,6 +71,7 @@ function posttest (req, res) {
 }
 
 function foodParser (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
   let placeParam = (req.body.action.params.place);
   let url = 'http://m.gachon.ac.kr/menu/menu.jsp';
 
@@ -121,7 +122,7 @@ function foodParser (req, res) {
 }
 
 function schoolFoodArt (req, res) {
-  console.log(req.body);
+  console.log('블록아이디'+req.body.userRequest.block.id);
   let url = 'http://m.gachon.ac.kr/menu/menu.jsp';
   const day = moment().day();
 
@@ -161,6 +162,7 @@ function schoolFoodArt (req, res) {
 }
 
 function schoolFoodEdu (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
   console.log(req.body);
   let url = 'http://m.gachon.ac.kr/menu/menu.jsp?gubun=B';
   const day = moment().day();
@@ -201,6 +203,7 @@ function schoolFoodEdu (req, res) {
 }
 
 function schoolFoodVision (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
   console.log(req.body);
   let url = 'http://m.gachon.ac.kr/menu/menu.jsp?gubun=C';
   const day = moment().day();
@@ -241,6 +244,7 @@ function schoolFoodVision (req, res) {
 }
 
 function libraryRestSeat (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
   let url = 'http://dlibadm.gachon.ac.kr/GACHON_CENTRAL_BOOKING/webbooking/statusList.jsp';
 
   client.fetch(url, param, function(err, $, resp){
@@ -307,6 +311,7 @@ function libraryRestSeat (req, res) {
 }
 
 function noticeParse (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
   let url = 'http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=358';
 
   client.fetch(url, param, function(err, $, resp){
@@ -392,6 +397,7 @@ function noticeParse (req, res) {
 }
 
 function scholarParse (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
   let url = 'http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=361';
 
   client.fetch(url, param, function(err, $, resp){
@@ -477,7 +483,7 @@ function scholarParse (req, res) {
 }
 
 function foodRanking (req, res) {
-
+  console.log('블록아이디'+req.body.userRequest.block.id);
   models.Food.findAll({
     limit: 5,
     order: [
@@ -610,8 +616,9 @@ function foodRanking (req, res) {
   });
 }
 
+// blockId: 5c616cd7384c553f07cd288a
 function foodInit (req, res) {
-
+  console.log('블록아이디'+req.body.userRequest.block.id);
   models.sequelize.query(`SELECT count(*) as count FROM food;`).then(cnt => {
     return res.status(200).json({
       "version": "2.0",
@@ -859,6 +866,188 @@ function getAir (req, res) {
   });
 }
 
+// blockID: 5c64110de8212717d2bfaabc
+function foodDetail (req, res) {
+  const food_id = req.body.action.clientExtra.food_id;
+  models.Food.findOne({
+    where: {
+        id: food_id
+    }
+  }).then(food => {
+      console.log(food);
+      if (food){
+          return res.status(200).json({
+            "version": "2.0",
+            "template": {
+              "outputs": [
+                {
+                  "carousel": {
+                    "type": "basicCard",
+                    "items": [
+                      {
+                        "title": `${food.name}`,
+                        "description": `${food.detail}`,
+                        "thumbnail": {
+                          "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                        },
+                        "buttons": [
+                          {
+                            "action": "block",
+                            "label": `👍 ${food.like}`,
+                            "messageText": `👍`,
+                            "blockId": '5c641ae35f38dd5839237e30'
+                          },
+                          {
+                            "action": "phone",
+                            "label": "전화걸기",
+                            "phoneNumber": `${food.number}`
+                          },
+                          {
+                            "action":  "webLink",
+                            "label": "위치보기",
+                            "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food.name}&tab=1`
+                          }
+                        ]
+                      },
+                    ]
+                  }
+                }
+              ],
+              "quickReplies": [
+                {
+                  "action": "block",
+                  "label": "좋아요👍",
+                  "messageText": `${food.name} 좋아요👍`,
+                  "blockId": "5c64175b384c553f07cd3850",
+                  "extra": {
+                    "food_id": `${food_id}`
+                  }
+                },
+                {
+                  "action": "block",
+                  "label": "이전",
+                  "messageText": `${food.type} 맛집 리스트!`,
+                  "blockId": "5c6173795f38dd5839236bb4",
+                  "extra": {
+                    "food_type": `${food.type}`
+                  }
+                },
+                {
+                  "action": "block",
+                  "label": "🏠",
+                  "messageText": `🏠`,
+                  "blockId": "5c6173795f38dd5839236bb4",
+                },
+              ],
+            }
+          });
+      } else {
+          // Return when no data found
+          return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+      }
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
+// blockID: 5c64175b384c553f07cd3850
+function foodLike (req, res) {
+  const food_id = req.body.action.clientExtra.food_id;
+  models.Food.findOne({
+    where: {
+        id: food_id
+    }
+  }).then(food => {
+    console.log(food);
+    if (food) {
+      models.Food.update({
+        like: (food.like + 1)
+      }, {
+          where: {
+              id: food_id
+          } // Condition
+      }).then(result => {
+          if (result){
+              return res.status(200).json({
+                "version": "2.0",
+                "template": {
+                  "outputs": [
+                    {
+                      "simpleText": {
+                        "text": `${food.name} 좋아요 완료!`
+                      }
+                    },
+                  ],
+                  "quickReplies": [
+                    {
+                      "action": "block",
+                      "label": "이전",
+                      "messageText": `${food.name}`,
+                      "blockId": "5c64110de8212717d2bfaabc",
+                      "extra": {
+                        "food_id": `${food_id}`
+                      }
+                    },
+                    {
+                      "action": "block",
+                      "label": "🏠",
+                      "messageText": `🏠`,
+                      "blockId": "5c6173795f38dd5839236bb4",
+                    },
+                  ],
+                }
+              })
+          } else {
+              return res.status(403).json({success: true, message: 'No user found to update or User does not exist with given kakao_id. ' +
+                  + result.toString()})
+          }
+      }).catch(function (err){
+        return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+      });
+    } else {
+      return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+    }
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
+// blockID: 5c641ae35f38dd5839237e30
+function failLike (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  return res.status(200).json({
+    "version": "2.0",
+    "template": {
+      "outputs": [
+        {
+          "simpleText": {
+            "text": `좋아요는 다음과 같은 카드의 하단 버튼을 통해 이용하실 수 있습니다!`
+          }
+        },
+        {
+          "simpleImage": {
+              "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg",
+              "altText": "좋아요"
+          }
+        }
+      ],
+      "quickReplies": [
+        {
+          "action": "block",
+          "label": "맛집리스트",
+          "blockId": "5c616cd7384c553f07cd288a",
+        },
+        {
+          "action": "block",
+          "label": "🏠",
+          "messageText": `🏠`,
+          "blockId": "5c6173795f38dd5839236bb4",
+        },
+      ],
+    }
+  })
+}
+
 
 module.exports = {
     test: test,
@@ -875,6 +1064,9 @@ module.exports = {
     foodByType: foodByType,
     getWeather: getWeather,
     getAir: getAir,
+    foodDetail: foodDetail,
+    foodLike: foodLike,
+    failLike: failLike,
 
 
 }
