@@ -5,6 +5,10 @@ const schedule = require('node-schedule');
 const models = require('../../models');
 const rp = require('request-promise');
 const jsonHelper = require('./jsonHelper');
+const {Builder, By, Key, until} = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
+const cheerio = require('cheerio');
+
 
 
 
@@ -1048,6 +1052,176 @@ function failLike (req, res) {
   })
 }
 
+//
+function elecLibrary1F (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  (async function getRestSeat() {
+    try {
+      const driver = new Builder().forBrowser('chrome').setChromeOptions(new chrome.Options().addArguments('--headless')).build();
+      await driver.get('http://dlibadm.gachon.ac.kr/GACHON_BOOKING/webbooking/seatList.jsp?typeNo=2&floor=1&roomCode=111&sectorCode=11101&bgImg=area11101.gif');
+      await driver.findElement(By.id('timeset')).sendKeys("0");
+      await driver.findElement(By.className('cssButton1')).click();
+      await driver.switchTo().frame("seatMap");
+      driver.getPageSource().then(function(title){
+        const $ = cheerio.load(title);
+        let img = [];
+        $('img').each(function(){
+          if ($(this).attr('src') === '/GACHON_BOOKING/korea/images/seat/Btn1.png') {
+            img.push(true);
+          } else if ($(this).attr('src') === '/GACHON_BOOKING/korea/images/seat/Btn_disable1.png') {
+            img.push(false);
+          }
+        });
+        let notebook = 0;
+        let infoSearch = 0;
+        let congressEdit = 0;
+        let multiEdit = 0;
+        let multiView = 0;
+        img.forEach(function(data, index) {
+          if (data === false) {
+            if(index > 69) { //노트북열람석
+              notebook += 1;
+            } else if (index > 37) { //정보검색
+              second += 1;
+            } else if (index > 29) { //국회자료편집
+              congressEdit += 1;
+            } else if (index > 21) { //멀티미디어편집
+              multiEdit += 1;
+            } else {
+              multiView += 1;
+            }
+          }
+        });
+        driver.quit();
+        return res.status(200).json({
+          "version": "2.0",
+          "template": {
+            "outputs": [
+              {
+                "listCard": {
+                  "header": {
+                    "title": "전자정보도서관 1F 여석 현황",
+                    "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
+                  },
+                  "items": [
+                    {
+                      "title": "멀티미디어열람석",
+                      "description": `${22 - multiView} / 22`,
+                      "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                    },
+                    {
+                      "title": "멀티미디어편집",
+                      "description": `${8 - multiEdit} / 8`,
+                      "imageUrl": "http://k.kakaocdn.net/dn/N4Epz/btqqHCfF5II/a3kMRckYml1NLPEo7nqTmK/1x1.jpg",
+                    },
+                    {
+                      "title": "국회자료편집",
+                      "description": `${8 - congressEdit} / 8`,
+                      "imageUrl": "http://k.kakaocdn.net/dn/bE8AKO/btqqFHI6vDQ/mWZGNbLIOlTv3oVF1gzXKK/1x1.jpg",
+                    },
+                    {
+                      "title": "정보검색",
+                      "description": `${32 - infoSearch} / 32`,
+                      "imageUrl": "http://k.kakaocdn.net/dn/bE8AKO/btqqFHI6vDQ/mWZGNbLIOlTv3oVF1gzXKK/1x1.jpg",
+                    },
+                    {
+                      "title": "노트북열람석",
+                      "description": `${15 - notebook} / 15`,
+                      "imageUrl": "http://k.kakaocdn.net/dn/bE8AKO/btqqFHI6vDQ/mWZGNbLIOlTv3oVF1gzXKK/1x1.jpg",
+                    }
+                  ],
+                  "buttons": [
+                    {
+                      "label": "도서관 자리 예약하기",
+                      "action": "webLink",
+                      "webLinkUrl": "http://lib.gachon.ac.kr/local/html/seatReservation"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        });
+      });
+    } catch(err) {
+      console.log(err);
+    }
+  })();
+}
+
+//
+function elecLibrary2F (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  (async function getRestSeat() {
+    try {
+      const driver = new Builder().forBrowser('chrome').setChromeOptions(new chrome.Options().addArguments('--headless')).build();
+      await driver.get('http://dlibadm.gachon.ac.kr/GACHON_BOOKING/webbooking/seatList.jsp?typeNo=1&floor=2&roomCode=121&sectorCode=12101&bgImg=area12101.gif');
+      await driver.findElement(By.id('timeset')).sendKeys("0");
+      await driver.findElement(By.className('cssButton1')).click();
+      await driver.switchTo().frame("seatMap");
+      driver.getPageSource().then(function(title){
+        const $ = cheerio.load(title);
+        let img = [];
+        $('img').each(function(){
+          if ($(this).attr('src') === '/GACHON_BOOKING/korea/images/seat/Btn1.png') {
+            img.push(true);
+          } else if ($(this).attr('src') === '/GACHON_BOOKING/korea/images/seat/Btn_disable1.png') {
+            img.push(false);
+          }
+        });
+        let notebook = 0;
+        let general = 0;
+        img.forEach(function(data, index) {
+          if (data === false) {
+            if(index > 53) { //일반열람석
+              general += 1;
+            } else {
+              notebook += 1;
+            }
+          }
+        });
+        driver.quit();
+        return res.status(200).json({
+          "version": "2.0",
+          "template": {
+            "outputs": [
+              {
+                "listCard": {
+                  "header": {
+                    "title": "전자정보도서관 2F 여석 현황",
+                    "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
+                  },
+                  "items": [
+                    {
+                      "title": "일반열람실",
+                      "description": `${84 - general} / 84`,
+                      "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                    },
+                    {
+                      "title": "노트북열람실",
+                      "description": `${54 - notebook} / 54`,
+                      "imageUrl": "http://k.kakaocdn.net/dn/N4Epz/btqqHCfF5II/a3kMRckYml1NLPEo7nqTmK/1x1.jpg",
+                    },
+                  ],
+                  "buttons": [
+                    {
+                      "label": "도서관 자리 예약하기",
+                      "action": "webLink",
+                      "webLinkUrl": "http://lib.gachon.ac.kr/local/html/seatReservation"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        });
+      });
+    } catch(err) {
+      console.log(err);
+    }
+  })();
+}
+
 
 module.exports = {
     test: test,
@@ -1067,6 +1241,8 @@ module.exports = {
     foodDetail: foodDetail,
     foodLike: foodLike,
     failLike: failLike,
+    elecLibrary1F: elecLibrary1F,
+    elecLibrary2F: elecLibrary2F,
 
 
 }
