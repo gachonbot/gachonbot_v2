@@ -8,6 +8,8 @@ const jsonHelper = require('./jsonHelper');
 const {Builder, By, Key, until} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const cheerio = require('cheerio');
+const AWS = require('aws-sdk');
+AWS.config.loadFromPath('./awscreds.json');
 
 
 
@@ -28,7 +30,7 @@ let weather_scheduler = schedule.scheduleJob('1 * * * *', function(){
             tc: parseFloat(response.temperature.tc),
             tmin: parseFloat(response.temperature.tmin),
             tmax: parseFloat(response.temperature.tmax),
-            humidity: parseFloat(response.humidity),
+            humidity: parseFldoat(response.humidity),
             time: response.timeRelease,
           }).then(result => {
             return result;
@@ -247,6 +249,7 @@ function schoolFoodVision (req, res) {
   });
 }
 
+// 5c612d2b5f38dd58392369f1
 function libraryRestSeat (req, res) {
   console.log('블록아이디'+req.body.userRequest.block.id);
   let url = 'http://dlibadm.gachon.ac.kr/GACHON_CENTRAL_BOOKING/webbooking/statusList.jsp';
@@ -743,7 +746,7 @@ function foodByType (req, res) {
           return res.status(200).json(jsonHelper.sendCarousel(`가천대 주변의 ${food_type}맛집 리스트입니다! 해당 음식점이름 버튼을 클릭해서 상세정보를 확인해보세요!`, food));
       } else {
           // Return when no data found
-          return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+          return res.status(403).json({success: false, message: 'No food found with given food_type.'})
       }
   }).catch(function (err){
     return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
@@ -920,6 +923,15 @@ function foodDetail (req, res) {
               "quickReplies": [
                 {
                   "action": "block",
+                  "label": "사진보기",
+                  "messageText": `${food.name} 사진보기`,
+                  "blockId": "5c668bb1384c5541a0ee4fde",
+                  "extra": {
+                    "food_id": `${food_id}`
+                  }
+                },
+                {
+                  "action": "block",
                   "label": "좋아요👍",
                   "messageText": `${food.name} 좋아요👍`,
                   "blockId": "5c64175b384c553f07cd3850",
@@ -957,62 +969,125 @@ function foodDetail (req, res) {
 // blockID: 5c64175b384c553f07cd3850
 function foodLike (req, res) {
   const food_id = req.body.action.clientExtra.food_id;
-  models.Food.findOne({
+  const user_id = req.body.userRequest.user.id;
+  models.User.findOrCreate({
     where: {
-        id: food_id
+        bot_id: user_id
     }
-  }).then(food => {
-    console.log(food);
-    if (food) {
-      models.Food.update({
-        like: (food.like + 1)
-      }, {
+  }).spread((user, created) => {
+    models.User_like.findAll({
+      where: {
+          user_id: user.id
+      }
+    }).then(result => {
+      let condition = true;
+      result.forEach(data => {
+        if(String(data.food_id) === food_id) {
+          condition = false;
+        }
+      });
+
+      if (condition === true) {
+        models.Food.findOne({
           where: {
               id: food_id
-          } // Condition
-      }).then(result => {
-          if (result){
-              return res.status(200).json({
-                "version": "2.0",
-                "template": {
-                  "outputs": [
-                    {
-                      "simpleText": {
-                        "text": `${food.name} 좋아요 완료!`
-                      }
-                    },
-                  ],
-                  "quickReplies": [
-                    {
-                      "action": "block",
-                      "label": "이전",
-                      "messageText": `${food.name}`,
-                      "blockId": "5c64110de8212717d2bfaabc",
-                      "extra": {
-                        "food_id": `${food_id}`
-                      }
-                    },
-                    {
-                      "action": "block",
-                      "label": "🏠",
-                      "messageText": `🏠`,
-                      "blockId": "5c6173795f38dd5839236bb4",
-                    },
-                  ],
-                }
-              })
-          } else {
-              return res.status(403).json({success: true, message: 'No user found to update or User does not exist with given kakao_id. ' +
-                  + result.toString()})
           }
-      }).catch(function (err){
-        return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
-      });
-    } else {
-      return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
-    }
-  }).catch(function (err){
-    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+        }).then(food => {
+          console.log(food);
+          if (food) {
+            models.Food.update({
+              like: (food.like + 1)
+            }, {
+                where: {
+                    id: food_id
+                } // Condition
+            }).then(result2 => {
+                if (result2){
+                  models.User_like.create({
+                    food_id: food_id,
+                    user_id: user.id
+                  }).then(final_result => {
+                    return res.status(200).json({
+                      "version": "2.0",
+                      "template": {
+                        "outputs": [
+                          {
+                            "simpleText": {
+                              "text": `${food.name} 좋아요 완료!`
+                            }
+                          },
+                        ],
+                        "quickReplies": [
+                          {
+                            "action": "block",
+                            "label": "이전",
+                            "messageText": `${food.name}`,
+                            "blockId": "5c64110de8212717d2bfaabc",
+                            "extra": {
+                              "food_id": `${food_id}`
+                            }
+                          },
+                          {
+                            "action": "block",
+                            "label": "🏠",
+                            "messageText": `🏠`,
+                            "blockId": "5c6173795f38dd5839236bb4",
+                          },
+                        ],
+                      }
+                    });
+                  }).catch(err => {
+                    console.log(err.message);
+                  })
+                } else {
+                    return res.status(403).json({success: true, message: 'No user found to update or User does not exist with given kakao_id. ' +
+                        + result.toString()})
+                }
+            }).catch(err => {
+              return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+            });
+          } else {
+            return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+          }
+        }).catch(err => {
+          return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+        });
+      } else {
+        return res.status(200).json({
+          "version": "2.0",
+          "template": {
+            "outputs": [
+              {
+                "simpleText": {
+                  "text": `한 음식점에 좋아요는 한 번만 누를 수 있어요...!`
+                }
+              },
+            ],
+            "quickReplies": [
+              {
+                "action": "block",
+                "label": "이전",
+                "messageText": `이전`,
+                "blockId": "5c64110de8212717d2bfaabc",
+                "extra": {
+                  "food_id": `${food_id}`
+                }
+              },
+              {
+                "action": "block",
+                "label": "🏠",
+                "messageText": `🏠`,
+                "blockId": "5c6173795f38dd5839236bb4",
+              },
+            ],
+          }
+        });
+      }
+    }).catch(err => {
+      console.log(err.message);
+    });
+  }).catch(err => {
+    console.log(err.message);
   });
 }
 
@@ -1052,7 +1127,83 @@ function failLike (req, res) {
   })
 }
 
-//
+//5c66836ae821274ba7892e1d
+function libraryInit (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  return res.status(200).json({
+    "version": "2.0",
+    "template": {
+      "outputs": [
+        {
+          "simpleText": {
+            "text": `도서관 여석조회 입니다! 중앙도서관과 전자정보도서관중에 선택해주세요!`
+          }
+        },
+      ],
+      "quickReplies": [
+        {
+          "action": "block",
+          "label": "중앙도서관",
+          "blockId": "5c612d2b5f38dd58392369f1",
+        },
+        {
+          "action": "block",
+          "label": "전자정보도서관",
+          "blockId": "5c66811f384c5541a0ee4f87",
+        },
+        {
+          "action": "block",
+          "label": "🏠",
+          "messageText": `🏠`,
+          "blockId": "5c6173795f38dd5839236bb4",
+        },
+      ],
+    }
+  })
+}
+
+// 5c66811f384c5541a0ee4f87
+function elecLibraryInit (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  return res.status(200).json({
+    "version": "2.0",
+    "template": {
+      "outputs": [
+        {
+          "simpleText": {
+            "text": `전자정보도서관 여석조회 입니다! 1층과 2층중에 선택해주세요!`
+          }
+        },
+      ],
+      "quickReplies": [
+        {
+          "action": "block",
+          "label": "1F",
+          "blockId": "5c6680c305aaa75509ea57ec",
+        },
+        {
+          "action": "block",
+          "label": "2F",
+          "blockId": "5c66810b5f38dd01ebc06976",
+        },
+        {
+          "action": "block",
+          "label": "이전",
+          "blockId": "5c66836ae821274ba7892e1d",
+        },
+        {
+          "action": "block",
+          "label": "🏠",
+          "messageText": `🏠`,
+          "blockId": "5c6173795f38dd5839236bb4",
+        },
+      ],
+    }
+  })
+}
+
+
+//5c6680c305aaa75509ea57ec
 function elecLibrary1F (req, res) {
   console.log('블록아이디'+req.body.userRequest.block.id);
   (async function getRestSeat() {
@@ -1149,7 +1300,7 @@ function elecLibrary1F (req, res) {
   })();
 }
 
-//
+//5c66810b5f38dd01ebc06976
 function elecLibrary2F (req, res) {
   console.log('블록아이디'+req.body.userRequest.block.id);
   (async function getRestSeat() {
@@ -1222,6 +1373,270 @@ function elecLibrary2F (req, res) {
   })();
 }
 
+// 5c668bb1384c5541a0ee4fde
+function foodImage (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  const food_id = req.body.action.clientExtra.food_id;
+  const user_id = req.body.userRequest.user.id;
+
+  models.User.findOrCreate({
+    where: {
+        bot_id: user_id
+    }
+  }).spread((user, created) => {
+    models.User.update(
+      {
+        last_food_id: food_id,
+      },     // What to update
+      {where: {
+              bot_id: user_id}
+      });
+  }).catch(err => {
+    console.log(err.message);
+  });
+  models.Food_image.findAll({
+    where: {
+        food_id: food_id
+    },
+    limit: 10,
+  }).then(image => {
+      if (image.length > 0){
+        return res.status(200).json(jsonHelper.sendImageCarousel(`JMT!`, food_id, image));
+      } else {
+        return res.status(200).json({
+          "version": "2.0",
+          "template": {
+            "outputs": [
+              {
+                "simpleText": {
+                  "text": `아직 등록된 이미지가 없습니다!`
+                }
+              },
+            ],
+            "quickReplies": [
+              {
+                "action": "block",
+                "label": "이미지 업로드",
+                "messageText": `이미지 업로드`,
+                "blockId": "5c68310e384c5541a0ee51e6",
+                "extra": {
+                  "food_id": `${food_id}`
+                }
+              },
+              {
+                "action": "block",
+                "label": "이전",
+                "messageText": `이전`,
+                "blockId": "5c64110de8212717d2bfaabc",
+                "extra": {
+                  "food_id": `${food_id}`
+                }
+              },
+              {
+                "action": "block",
+                "label": "🏠",
+                "messageText": `🏠`,
+                "blockId": "5c6173795f38dd5839236bb4",
+              },
+            ],
+          }
+        });
+      }
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
+// 5c682e48384c5541a0ee51da
+function moodang (req, res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+
+  let timeArray = [840,845,855,900,915,930,945,1000,1015,1030,1045,1100,1115,1130,1145,1300,1315,1330,1345,1400,1415,1430,1445,1500,1515,1530,1545,1600,1615,1630,1645,1700,1715];
+  let timeNow = moment().format('HHmm');
+  let dayNow = moment().day();
+
+  let result = timeArray.reduce((acc,cur) => {
+    if(timeNow > cur){
+
+    } else {
+      if ((cur - timeNow < acc[0])) {
+        acc[0] = cur-timeNow;
+        acc[1] = cur;
+      }
+    }
+    return acc;
+  },[9999]);
+
+  let finalTime = String(result[1]);
+
+  if(finalTime.length === 3){
+    finalTime = finalTime.slice(0,1)+'시'+finalTime.slice(1)+'분';
+  }else{
+    finalTime = finalTime.slice(0,2)+'시'+finalTime.slice(2)+'분';
+  }
+
+  models.Weather.findOne({
+    order: [
+        // Will escape username and validate DESC against a list of valid direction parameters
+        ['id', 'DESC']
+    ]
+  }).then(weather => {
+      if (weather){
+        if (dayNow === 6 || dayNow === 0) {
+          return res.status(200).json(jsonHelper.sendSimpleText('주말에는 운영하지 않습니다!'));
+        } else {
+          if (weather.name.includes('눈') || weather.name.includes('비') || weather.name.includes('뇌우')) {
+            return res.status(200).json(jsonHelper.sendSimpleText(`다음 무당이 시간은 ${finalTime} 인데... ${weather.name} 때문에 운행을 안 할수도 있어요!`));
+          } else if (result[0] === 9999) {
+            return res.status(200).json(jsonHelper.sendSimpleText('오늘은 더 이상 운영하지 않아요...!'));
+          } else {
+            return res.status(200).json(jsonHelper.sendSimpleText(`다음 무당이 시간은 ${finalTime} 입니다!`));
+          }
+        }
+      } else {
+          // Return when no data found
+          return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+      }
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
+// 5c68310e384c5541a0ee51e6
+function imageUpload (req, res) {
+  const s3 = new AWS.S3();
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  const user_id = req.body.userRequest.user.id;
+
+  let image = JSON.parse(req.body.action.detailParams.secureimage.value);
+  image = image.secureUrls.replace('List','').substring(1).slice(0,-1);
+  image = image.split(', ');
+  console.log(image);
+
+  models.User.findOne({
+    where: {
+        bot_id: user_id
+    },
+  }).then(user => {
+      if (user){
+        const last_food_id = user.last_food_id
+        image.forEach((data, index, array) => {
+          let options = {
+              uri: `${data}`,
+              encoding: null
+          };
+
+
+          rp(options)
+              .then(function (response) {
+                let s3params = {
+                    Body: response,
+                    Bucket: "gachonbot",
+                    Key: `${last_food_id}_${Math.floor(Math.random() * 100000) + 1}.jpg`,
+                    ACL: "public-read"
+                };
+
+                s3.upload(s3params, function(err, img) {
+                    if (err) {
+                      console.log(err.message);
+                    } else {
+                      models.Food_image.create({
+                        food_id: last_food_id,
+                        url: img.Location,
+                      }).then(result => {
+                        if (index === (array.length -1)) {
+                          return res.status(200).json(jsonHelper.sendSimpleText(`소중한 사진을 제공해주셔서 감사합니다! 사진을 검토 후 등록이 진행됩니다!`));
+                        }
+                      }).catch(err => {
+                        return res.status(200).json(jsonHelper.sendSimpleText(`Error`));
+                      });
+                    }
+                });
+              })
+              .catch(function (err) {
+                return res.status(200).json(jsonHelper.sendSimpleText(`Error`));
+              });
+        });
+      } else {
+          return res.status(403).json({success: false, message: 'No user found with given user_id.'})
+      }
+  }).catch(function (err){
+    return res.status(500).json({success: false, message: 'Internal Server or Database Error. err: ' + err.message})
+  });
+}
+
+// 5c6986d45f38dd01ebc06dd8
+function selectCollege (req,res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  return res.status(200).json(jsonHelper.sendCollege());
+}
+
+// 5c69875de821274ba78931b6
+function selectMajor (req,res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  const college = req.body.action.clientExtra.college;
+
+  switch (college) {
+    case '경영대학':
+      return res.status(200).json(jsonHelper.sendMajor(college,'경영학부','글로벌경영학트랙'));
+    break;
+    case '사회과학대학':
+      return res.status(200).json(jsonHelper.sendMajor(college,'행정학과','미디어커뮤니케이션학과','관광경영학과','글로벌경제학과','헬스케어경영학과','응용통계학과','사회복지학과','유아교육학과','경찰학연계전공'));
+    break;
+    case '인문대학':
+      return res.status(200).json(jsonHelper.sendMajor(college,'한국어문학과','영미어문학과','동양어문학과','유럽어문학과'));
+    break;
+    case '법과대학':
+      return res.status(200).json(jsonHelper.sendMajor(college,'법학과','경찰안보학과'));
+    break;
+    case '공과대학':
+      return res.status(200).json(jsonHelper.sendEngiMajor());
+    break;
+    case '공과대학2':
+      return res.status(200).json(jsonHelper.sendEngiMajorSecond());
+    break;
+    case '바이오나노대학':
+      return res.status(200).json(jsonHelper.sendMajor(college,'바이오나노학과','나노화학과','나노물리학과','생명과학과','식품생물공학과','식품영양학과'));
+    break;
+    case 'IT대학':
+      return res.status(200).json(jsonHelper.sendMajor(college,'소프트웨어학과','컴퓨터공학과','전자공학과','에너지IT학과'));
+    break;
+    case '한의과대학':
+      return res.status(200).json(jsonHelper.sendMajor(college,'한의예과','한의학과'));
+    break;
+    case '에술대학':
+      return res.status(200).json(jsonHelper.sendMajor(college,'회화,조소과','산업디자인과','패션디자인과','음악학부','체육학부','연기예술학과'));
+    break;
+  }
+}
+
+// 5c697eab05aaa75509ea5cbe
+function updateMajor (req,res) {
+  console.log('블록아이디'+req.body.userRequest.block.id);
+  const user_id = req.body.userRequest.user.id;
+  const major = req.body.action.clientExtra.major;
+
+  models.User.findOrCreate({
+    where: {
+        bot_id: user_id
+    }
+  }).spread((user, created) => {
+    models.User.update(
+      {
+        major: major,
+      },     // What to update
+      {where: {
+              bot_id: user_id}
+      }).then(result => {
+        return res.status(200).json(jsonHelper.sendSimpleText(`정보가 업데이트되었습니다!`));
+      }).catch(err => {
+        console.log(err.message);
+      });
+  }).catch(err => {
+    console.log(err.message);
+  });
+}
+
 
 module.exports = {
     test: test,
@@ -1243,6 +1658,13 @@ module.exports = {
     failLike: failLike,
     elecLibrary1F: elecLibrary1F,
     elecLibrary2F: elecLibrary2F,
-
+    elecLibraryInit: elecLibraryInit,
+    libraryInit: libraryInit,
+    foodImage: foodImage,
+    moodang: moodang,
+    imageUpload: imageUpload,
+    selectCollege: selectCollege,
+    selectMajor: selectMajor,
+    updateMajor: updateMajor,
 
 }

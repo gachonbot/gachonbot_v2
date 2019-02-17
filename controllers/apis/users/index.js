@@ -31,6 +31,14 @@ router.post('/foodLike', chatbotService.foodLike);
 router.post('/failLike', chatbotService.failLike);
 router.post('/elecLibrary1F', chatbotService.elecLibrary1F);
 router.post('/elecLibrary2F', chatbotService.elecLibrary2F);
+router.post('/elecLibraryInit', chatbotService.elecLibraryInit);
+router.post('/libraryInit', chatbotService.libraryInit);
+router.post('/foodImage', chatbotService.foodImage);
+router.post('/moodang', chatbotService.moodang);
+router.post('/imageUpload', chatbotService.imageUpload);
+router.post('/selectCollege', chatbotService.selectCollege);
+router.post('/selectMajor', chatbotService.selectMajor);
+router.post('/updateMajor', chatbotService.updateMajor);
 // ^Middleware. Make sure to put all the routes which needs authentication below this middleware.
 
 module.exports = router;

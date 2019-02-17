@@ -68,6 +68,7 @@ const Food_image = sequelize.define('food_image', {
           primaryKey: true
       },
   url: Sequelize.STRING,
+  verify: { type: Sequelize.BOOLEAN, defaultValue: false }
 });
 
 Food.hasMany(Food_image, {as: 'images'})
@@ -99,6 +100,32 @@ const Weather = sequelize.define('weather', {
   time: Sequelize.STRING,
 });
 
+const User = sequelize.define('user', {
+  id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          primaryKey: true
+      },
+  bot_id: {
+          type: Sequelize.STRING,
+      },
+  major: Sequelize.STRING,
+  last_food_id: Sequelize.INTEGER,
+});
+
+
+const User_like = sequelize.define('user_like', {
+  id: {
+          type: Sequelize.INTEGER,
+          autoIncrement: true,
+          primaryKey: true,
+      },
+  food_id: Sequelize.INTEGER,
+});
+
+User.hasMany(User_like, {as: 'likes'});
+
+
 module.exports = {
     sequelize: sequelize,
     Major: Major,
@@ -106,4 +133,6 @@ module.exports = {
     Air: Air,
     Weather: Weather,
     Food_image: Food_image,
+    User: User,
+    User_like: User_like,
 };
