@@ -36,9 +36,14 @@ function sendLibraryRestSeat (restSeat, totalSeat) {
     "template": {
       "outputs": [
         {
+          "simpleText": {
+            "text": `(잔여 좌석 / 총 좌석)`
+          }
+        },
+        {
           "listCard": {
             "header": {
-              "title": "중앙도서관 여석 현황 (잔여 좌석 / 총 좌석)",
+              "title": "중앙도서관 여석 현황",
               "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
             },
             "items": [
@@ -409,9 +414,14 @@ function sendElecLibrary1F (multiView, multiEdit, congressEdit, infoSearch, note
     "template": {
       "outputs": [
         {
+          "simpleText": {
+            "text": `30분 단위로 예약 가능 좌석을 조회합니다.\n예) 14:51 -> 15:00~15:30 예약가능 좌석 조회\n(잔여 좌석 / 총 좌석)`
+          }
+        },
+        {
           "listCard": {
             "header": {
-              "title": "전자정보도서관 1F 여석 현황 (잔여 좌석 / 총 좌석)",
+              "title": "전자정보도서관 1F 여석 현황",
               "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
             },
             "items": [
@@ -475,9 +485,14 @@ function sendElecLibrary2F (general, notebook) {
     "template": {
       "outputs": [
         {
+          "simpleText": {
+            "text": `30분 단위로 예약 가능 좌석을 조회합니다.\n예) 14:51 -> 15:00~15:30 예약가능 좌석 조회\n(잔여 좌석 / 총 좌석)`
+          }
+        },
+        {
           "listCard": {
             "header": {
-              "title": "전자정보도서관 2F 여석 현황 (잔여 좌석 / 총 좌석)",
+              "title": "전자정보도서관 2F 여석 현황",
               "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
             },
             "items": [
