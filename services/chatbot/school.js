@@ -207,7 +207,7 @@ function getAir (req, res) {
             pm25grade = '매우나쁨';
           break;
         }
-          return res.status(200).json(jsonHelper.schoolJson.sendGetAir(air));
+          return res.status(200).json(jsonHelper.schoolJson.sendGetAir(air, pm10grade, pm25grade));
       } else {
           // Return when no data found
           console.log(err.message);

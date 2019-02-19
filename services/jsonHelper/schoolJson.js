@@ -300,7 +300,7 @@ function sendGetWeather (weather) {
   };
 }
 
-function sendGetAir (air) {
+function sendGetAir (air, pm10grade, pm25grade) {
   return {
     "version": "2.0",
     "template": {
