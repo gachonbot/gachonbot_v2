@@ -2,43 +2,40 @@
 
 const
     express = require('express'),
-    // userService = require('../../../services/users'),
     // models = require('../../../models'),
-    chatbotService = require('../../../services/users/chatbot');
+    chatbot = require('../../../services/chatbot');
 
 let router = express.Router();
 
 console.log('apis/users/index.js called');
 /**
- * api/v1/users/
+ * users/
  */
-router.get('/test', chatbotService.test);
-router.post('/posttest', chatbotService.posttest);
-router.post('/schoolFoodArt', chatbotService.schoolFoodArt);
-router.post('/schoolFoodEdu', chatbotService.schoolFoodEdu);
-router.post('/schoolFoodVision', chatbotService.schoolFoodVision);
-router.post('/libraryRestSeat', chatbotService.libraryRestSeat);
-router.post('/noticeParse', chatbotService.noticeParse);
-router.post('/scholarParse', chatbotService.scholarParse);
-router.post('/foodParser', chatbotService.foodParser);
-router.post('/foodRanking', chatbotService.foodRanking);
-router.post('/foodInit', chatbotService.foodInit);
-router.post('/foodByType', chatbotService.foodByType);
-router.post('/getWeather', chatbotService.getWeather);
-router.post('/getAir', chatbotService.getAir);
-router.post('/foodDetail', chatbotService.foodDetail);
-router.post('/foodLike', chatbotService.foodLike);
-router.post('/failLike', chatbotService.failLike);
-router.post('/elecLibrary1F', chatbotService.elecLibrary1F);
-router.post('/elecLibrary2F', chatbotService.elecLibrary2F);
-router.post('/elecLibraryInit', chatbotService.elecLibraryInit);
-router.post('/libraryInit', chatbotService.libraryInit);
-router.post('/foodImage', chatbotService.foodImage);
-router.post('/moodang', chatbotService.moodang);
-router.post('/imageUpload', chatbotService.imageUpload);
-router.post('/selectCollege', chatbotService.selectCollege);
-router.post('/selectMajor', chatbotService.selectMajor);
-router.post('/updateMajor', chatbotService.updateMajor);
+router.post('/libraryRestSeat', chatbot.school.libraryRestSeat);
+router.post('/noticeParse', chatbot.school.noticeParse);
+router.post('/scholarParse', chatbot.school.scholarParse);
+router.post('/foodParser', chatbot.school.foodParser);
+router.post('/foodRanking', chatbot.food.foodRanking);
+router.post('/foodInit', chatbot.food.foodInit);
+router.post('/foodByType', chatbot.food.foodByType);
+router.post('/getWeather', chatbot.school.getWeather);
+router.post('/getAir', chatbot.school.getAir);
+router.post('/foodDetail', chatbot.food.foodDetail);
+router.post('/foodLike', chatbot.food.foodLike);
+router.post('/failLike', chatbot.food.failLike);
+router.post('/elecLibrary1F', chatbot.school.elecLibrary1F);
+router.post('/elecLibrary2F', chatbot.school.elecLibrary2F);
+router.post('/elecLibraryInit', chatbot.school.elecLibraryInit);
+router.post('/libraryInit', chatbot.school.libraryInit);
+router.post('/foodImage', chatbot.foodl.foodImage);
+router.post('/moodang', chatbot.school.moodang);
+router.post('/imageUpload', chatbot.food.imageUpload);
+router.post('/selectCollege', chatbot.school.selectCollege);
+router.post('/selectMajor', chatbot.school.selectMajor);
+router.post('/updateMajor', chatbot.school.updateMajor);
+router.post('/majorNoticeParse', chatbot.school.majorNoticeParse);
+router.post('/majorParse', chatbot.school.majorParse);
+router.post('/homeMenu', chatbot.basic.homeMenu);
 // ^Middleware. Make sure to put all the routes which needs authentication below this middleware.
 
 module.exports = router;
