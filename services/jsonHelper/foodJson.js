@@ -284,7 +284,7 @@ function sendFoodInit (cnt) {
   };
 }
 
-function sendFoodDetail (food) {
+function sendFoodDetail (food_id, food) {
   return {
     "version": "2.0",
     "template": {
