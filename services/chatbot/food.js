@@ -182,14 +182,15 @@ function foodImage (req, res) {
   });
   models.Food_image.findAll({
     where: {
-        food_id: food_id
+        food_id: food_id,
+        verify: true,
     },
     limit: 10,
   }).then(image => {
       if (image.length > 0){
         return res.status(200).json(jsonHelper.foodJson.sendFoodImageCarousel(`JMT!`, food_id, image));
       } else {
-        return res.status(200).json(jsonHelper.foodJson.sendFoodImage(food_id));
+        return res.status(200).json(jsonHelper.foodJson.sendNoImage(food_id));
       }
   }).catch(function (err){
     return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));

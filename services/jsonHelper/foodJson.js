@@ -459,7 +459,7 @@ function sendFailLike () {
   };
 }
 
-function sendFoodImage (food_id) {
+function sendNoImage (food_id) {
   return {
     "version": "2.0",
     "template": {
@@ -622,8 +622,9 @@ function sendFoodImageCarousel(text, food_id, ...args) {
   for(let i = 0; i < args[0].length; i += 1) {
     outputJson.template.outputs[1].carousel.items[i] = addImageCarouselItem(args[0][i].url);
   }
-  outputJson.template.quickReplies[0] = addQuickReply('이전', '5c64110de8212717d2bfaabc', food_id);
-  outputJson.template.quickReplies[1] = addQuickReply('🏠', '5c66b0f65f38dd01ebc06a44', food_id);
+  outputJson.template.quickReplies[0] = addQuickReply('이미지 업로드', '5c68310e384c5541a0ee51e6', food_id);
+  outputJson.template.quickReplies[1] = addQuickReply('이전', '5c64110de8212717d2bfaabc', food_id);
+  outputJson.template.quickReplies[2] = addQuickReply('🏠', '5c66b0f65f38dd01ebc06a44', food_id);
   return outputJson;
 }
 
@@ -634,7 +635,7 @@ module.exports = {
   sendFoodLikeY: sendFoodLikeY,
   sendFoodLikeN: sendFoodLikeN,
   sendFailLike: sendFailLike,
-  sendFoodImage: sendFoodImage,
+  sendNoImage: sendNoImage,
   sendFoodCarousel: sendFoodCarousel,
   sendFoodImageCarousel: sendFoodImageCarousel,
 }
