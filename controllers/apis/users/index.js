@@ -27,7 +27,7 @@ router.post('/elecLibrary1F', chatbot.school.elecLibrary1F);
 router.post('/elecLibrary2F', chatbot.school.elecLibrary2F);
 router.post('/elecLibraryInit', chatbot.school.elecLibraryInit);
 router.post('/libraryInit', chatbot.school.libraryInit);
-router.post('/foodImage', chatbot.foodl.foodImage);
+router.post('/foodImage', chatbot.food.foodImage);
 router.post('/moodang', chatbot.school.moodang);
 router.post('/imageUpload', chatbot.food.imageUpload);
 router.post('/selectCollege', chatbot.school.selectCollege);
