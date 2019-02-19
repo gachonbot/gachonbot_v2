@@ -285,6 +285,12 @@ function sendFoodInit (cnt) {
 }
 
 function sendFoodDetail (food_id, food) {
+  let imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
+  const imagesLeng = food.images.length;
+  if (imagesLeng > 0) {
+    const imagesRand = Math.floor(imagesLeng * Math.random());
+    imageUrl = food.images[imagesRand].url;
+  }
   return {
     "version": "2.0",
     "template": {
@@ -297,7 +303,7 @@ function sendFoodDetail (food_id, food) {
                 "title": `${food.name}`,
                 "description": `${food.detail}`,
                 "thumbnail": {
-                  "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                  "imageUrl": `${imageUrl}`
                 },
                 "buttons": [
                   {
@@ -500,7 +506,7 @@ function sendNoImage (food_id) {
   };
 }
 
-function sendFoodCarousel(text, ...args) {
+function sendFoodCarousel(text, food) {
   let outputJson = {
     "version": "2.0",
     "template": {
@@ -522,12 +528,12 @@ function sendFoodCarousel(text, ...args) {
     }
   };
 
-  function addCarouselItem (name, detail, number){
+  function addCarouselItem (name, detail, number, image){
     return {
       "title": `${name}`,
       "description": `${detail}`,
       "thumbnail": {
-        "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+        "imageUrl": `${image}`
       },
       "buttons": [
         {
@@ -561,9 +567,15 @@ function sendFoodCarousel(text, ...args) {
   }
 
 
-  for(let i = 0; i < args[0].length; i += 1) {
-    outputJson.template.outputs[1].carousel.items[i] = addCarouselItem(args[0][i].name, args[0][i].detail, args[0][i].number);
-    outputJson.template.quickReplies[i] = addQuickReply(args[0][i].name, '5c64110de8212717d2bfaabc', args[0][i].id);
+  for(let i = 0; i < food.length; i += 1) {
+    let imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
+    const imagesLeng = food[i].images.length;
+    if (imagesLeng > 0) {
+      const imagesRand = Math.floor(imagesLeng * Math.random());
+      imageUrl = food[i].images[imagesRand].url;
+    }
+    outputJson.template.outputs[1].carousel.items[i] = addCarouselItem(food[i].name, food[i].detail, food[i].number, imageUrl);
+    outputJson.template.quickReplies[i] = addQuickReply(food[i].name, '5c64110de8212717d2bfaabc', food[i].id);
   }
 
   return outputJson;
@@ -591,8 +603,13 @@ function sendFoodImageCarousel(text, food_id, ...args) {
     }
   };
 
-  function addImageCarouselItem (url){
+  function addImageCarouselItem (url, source){
+    let sourceText = '출처: ' + source;
+    if (source === null) {
+      sourceText = '';
+    }
     return {
+      "description": `${sourceText}`,
       "thumbnail": {
         "imageUrl": `${url}`,
         "fixedRatio": "true",
@@ -620,7 +637,7 @@ function sendFoodImageCarousel(text, food_id, ...args) {
 
 
   for(let i = 0; i < args[0].length; i += 1) {
-    outputJson.template.outputs[1].carousel.items[i] = addImageCarouselItem(args[0][i].url);
+    outputJson.template.outputs[1].carousel.items[i] = addImageCarouselItem(args[0][i].url, args[0][i].source);
   }
   outputJson.template.quickReplies[0] = addQuickReply('이미지 업로드', '5c68310e384c5541a0ee51e6', food_id);
   outputJson.template.quickReplies[1] = addQuickReply('이전', '5c64110de8212717d2bfaabc', food_id);

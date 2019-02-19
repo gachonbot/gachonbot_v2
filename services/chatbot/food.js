@@ -42,10 +42,13 @@ function foodByType (req, res) {
     where: {
         type: food_type
     },
-    order: [
-        // Will escape username and validate DESC against a list of valid direction parameters
-        ['like', 'DESC']
-    ]
+    include: [{
+      model: models.Food_image,
+      as: 'images',
+      where: {verify: true},
+      required: false
+    }],
+    order: models.sequelize.random()
   }).then(food => {
       console.log(food);
       if (food){
@@ -65,9 +68,15 @@ function foodDetail (req, res) {
   models.Food.findOne({
     where: {
         id: food_id
-    }
+    },
+    include: [{
+      model: models.Food_image,
+      as: 'images',
+      where: {verify: true},
+      required: false
+    }]
   }).then(food => {
-      console.log(food);
+    console.log(JSON.stringify(food));
       if (food){
           return res.status(200).json(jsonHelper.foodJson.sendFoodDetail(food_id, food));
       } else {
@@ -186,6 +195,7 @@ function foodImage (req, res) {
         verify: true,
     },
     limit: 10,
+    order: models.sequelize.random()
   }).then(image => {
       if (image.length > 0){
         return res.status(200).json(jsonHelper.foodJson.sendFoodImageCarousel(`JMT!`, food_id, image));
@@ -262,6 +272,25 @@ function imageUpload (req, res) {
   });
 }
 
+function test (req, res) {
+  models.Food.findOne({
+    where: {
+        id: 26
+    },
+    include: [{
+      model: models.Food_image,
+      as: 'images',
+      where: {food_id: 26}
+    }]
+  }).then(food => {
+      console.log(JSON.stringify(food));
+      return res.status(200).json(food)
+  }).catch(function (err){
+    console.log(err.message);
+    return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'))
+  });
+}
+
 module.exports = {
     foodRanking: foodRanking,
     foodInit: foodInit,
@@ -271,4 +300,5 @@ module.exports = {
     failLike: failLike,
     foodImage: foodImage,
     imageUpload: imageUpload,
+    test: test,
 }

@@ -43,6 +43,7 @@ router.post('/majorParse', chatbot.school.majorParse);
  router.post('/failLike', chatbot.food.failLike);
  router.post('/foodImage', chatbot.food.foodImage);
  router.post('/imageUpload', chatbot.food.imageUpload);
+  router.post('/test', chatbot.food.test);
 
 /*
  * basic (기타)

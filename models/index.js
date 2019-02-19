@@ -68,10 +68,12 @@ const Food_image = sequelize.define('food_image', {
           primaryKey: true
       },
   url: Sequelize.STRING,
-  verify: { type: Sequelize.BOOLEAN, defaultValue: false }
+  verify: { type: Sequelize.BOOLEAN, defaultValue: false },
+  source: Sequelize.STRING,
 });
 
-Food.hasMany(Food_image, {as: 'images'})
+Food.hasMany(Food_image, {as: 'images'});
+Food_image.belongsTo(Food);
 
 const Air = sequelize.define('air', {
   id: {
@@ -124,7 +126,7 @@ const User_like = sequelize.define('user_like', {
 });
 
 User.hasMany(User_like, {as: 'likes'});
-
+User_like.belongsTo(User);
 
 module.exports = {
     sequelize: sequelize,

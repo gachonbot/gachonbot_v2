@@ -123,7 +123,7 @@ function noticeParse (req, res) {
         }
       });
 
-      return res.status(200).json(sendNoticeParse(noticeArray));
+      return res.status(200).json(jsonHelper.schoolJson.sendNoticeParse(noticeArray));
   });
 }
 
