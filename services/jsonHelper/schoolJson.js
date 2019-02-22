@@ -952,7 +952,7 @@ function sendSearchSchedule (schedule) {
       "outputs": [
         {
           "simpleText": {
-            "text": `관련도가 높은 상위 3개의 학사일정 입니다!\n\n${schedule[0].title} ${schedule[0].date}\n${schedule[1].title} ${schedule[1].date}\n${schedule[2].title} ${schedule[2].date}`
+            "text": `관련도가 높은 상위 3개의 학사일정 입니다!\n\n${schedule[0].title}\n${schedule[0].date}\n\n${schedule[1].title}\n${schedule[1].date}\n\n${schedule[2].title}\n${schedule[2].date}`
           }
         },
       ],

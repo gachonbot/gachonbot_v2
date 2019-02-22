@@ -80,11 +80,17 @@ function sendFoodRanking (food) {
   function addCarouselItem (name, detail, number, like, image){
     return {
       "title": `${name}`,
-      "description": `👍 ${like}\n\n${detail}`,
+      "description": `${detail}`,
       "thumbnail": {
         "imageUrl": `${image}`
       },
       "buttons": [
+        {
+          "action": "block",
+          "label": `👍 ${like}`,
+          "messageText": `👍`,
+          "blockId": '5c641ae35f38dd5839237e30'
+        },
         {
           "action": "phone",
           "label": "전화걸기",
