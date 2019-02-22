@@ -276,12 +276,14 @@ function elecLibrary1F (req, res) {
             }
           }
         });
-        driver.quit();
         return res.status(200).json(jsonHelper.schoolJson.sendElecLibrary1F(multiView, multiEdit, congressEdit, infoSearch, notebook));
       });
     } catch(err) {
       console.log(err);
       return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
+    } finally {
+      await driver.close();
+      await driver.quit();
     }
   })();
 }
@@ -316,12 +318,14 @@ function elecLibrary2F (req, res) {
             }
           }
         });
-        driver.quit();
         return res.status(200).json(jsonHelper.schoolJson.sendElecLibrary2F(general, notebook));
       });
     } catch(err) {
       console.log(err.message);
       return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
+    } finally {
+      await driver.close();
+      await driver.quit();
     }
   })();
 }
