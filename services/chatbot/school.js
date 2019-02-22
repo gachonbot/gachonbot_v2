@@ -240,8 +240,8 @@ function elecLibraryInit (req, res) {
 //5c6680c305aaa75509ea57ec
 function elecLibrary1F (req, res) {
   (async function getRestSeat() {
+    const driver = new Builder().forBrowser('chrome').setChromeOptions(new chrome.Options().addArguments('--headless')).build();
     try {
-      const driver = new Builder().forBrowser('chrome').setChromeOptions(new chrome.Options().addArguments('--headless')).build();
       await driver.get('http://dlibadm.gachon.ac.kr/GACHON_BOOKING/webbooking/seatList.jsp?typeNo=2&floor=1&roomCode=111&sectorCode=11101&bgImg=area11101.gif');
       await driver.findElement(By.id('timeset')).sendKeys("0");
       await driver.findElement(By.className('cssButton1')).click();
@@ -290,9 +290,9 @@ function elecLibrary1F (req, res) {
 
 //5c66810b5f38dd01ebc06976
 function elecLibrary2F (req, res) {
+  const driver = new Builder().forBrowser('chrome').setChromeOptions(new chrome.Options().addArguments('--headless')).build();
   (async function getRestSeat() {
     try {
-      const driver = new Builder().forBrowser('chrome').setChromeOptions(new chrome.Options().addArguments('--headless')).build();
       await driver.get('http://dlibadm.gachon.ac.kr/GACHON_BOOKING/webbooking/seatList.jsp?typeNo=1&floor=2&roomCode=121&sectorCode=12101&bgImg=area12101.gif');
       await driver.findElement(By.id('timeset')).sendKeys("0");
       await driver.findElement(By.className('cssButton1')).click();
