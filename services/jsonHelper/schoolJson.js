@@ -828,6 +828,152 @@ function sendEngiMajorSecond() {
   return outputJson;
 }
 
+function sendScheduleByMonth (month, result) {
+  return {
+      "version": "2.0",
+      "template": {
+          "outputs": [
+              {
+                "basicCard": {
+                  "title": `${month}월 학사일정`,
+                  "description": `${result}`,
+                  "thumbnail": {
+                    "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                  },
+                }
+              }
+          ],
+          "quickReplies": [
+            {
+              "action": "block",
+              "label": "이전",
+              "messageText": `학사일정`,
+              "blockId": "5c6ffa1105aaa75509ea8c3d",
+            },
+            {
+              "action": "block",
+              "label": "🏠",
+              "messageText": `🏠`,
+              "blockId": "5c6aceb7384c5541a0ee5bcc",
+            },
+          ],
+      }
+  };
+}
+
+function sendScheduleByMonthInit() {
+  let collegeArray = ['1','2','3','4','5','6','7','8','9'];
+  let outputJson = {
+    "version": "2.0",
+    "template": {
+      "outputs": [
+        {
+          "simpleText": {
+            "text": `해당되는 월을 선택해주세요!`
+          }
+        },
+      ],
+      "quickReplies": [
+      ],
+    }
+  };
+
+  function addQuickReplyMonth (name, block_id) {
+    return {
+      "action": "block",
+      "label": `${name}월`,
+      "messageText": `${name}월`,
+      "blockId": `${block_id}`,
+      "extra": {
+        "month": `${name}`
+      }
+    };
+  }
+
+  for(let i = 0; i < collegeArray.length; i += 1) {
+    outputJson.template.quickReplies[i] = addQuickReplyMonth(collegeArray[i], '5c6ff96a5f38dd01ebc0a259');
+  }
+  outputJson.template.quickReplies[collegeArray.length] = {
+    "action": "block",
+    "label": '다음',
+    "messageText": '다음',
+    "blockId": '5c6ff9565f38dd01ebc0a257',
+  };
+
+  return outputJson;
+}
+
+function sendScheduleByMonthInit2() {
+  let collegeArray = ['10','11','12'];
+  let outputJson = {
+    "version": "2.0",
+    "template": {
+      "outputs": [
+        {
+          "simpleText": {
+            "text": `해당되는 월을 선택해주세요!`
+          }
+        },
+      ],
+      "quickReplies": [
+      ],
+    }
+  };
+
+  function addQuickReplyMonth (name, block_id) {
+    return {
+      "action": "block",
+      "label": `${name}월`,
+      "messageText": `${name}월`,
+      "blockId": `${block_id}`,
+      "extra": {
+        "month": `${name}`
+      }
+    };
+  }
+
+  for(let i = 0; i < collegeArray.length; i += 1) {
+    outputJson.template.quickReplies[i] = addQuickReplyMonth(collegeArray[i], '5c6ff96a5f38dd01ebc0a259');
+  }
+  outputJson.template.quickReplies[collegeArray.length] = {
+    "action": "block",
+    "label": '이전',
+    "messageText": '이전',
+    "blockId": '5c6ff94905aaa75509ea8c2b',
+  };
+
+  return outputJson;
+}
+
+function sendSearchSchedule (schedule) {
+  return {
+    "version": "2.0",
+    "template": {
+      "outputs": [
+        {
+          "simpleText": {
+            "text": `관련도가 높은 상위 3개의 학사일정 입니다!\n\n${schedule[0].title} ${schedule[0].date}\n${schedule[1].title} ${schedule[1].date}\n${schedule[2].title} ${schedule[2].date}`
+          }
+        },
+      ],
+      "quickReplies": [
+        {
+          "action": "block",
+          "label": "이전",
+          "messageText": `이전`,
+          "blockId": "5c6ffa1105aaa75509ea8c3d",
+        },
+        {
+          "action": "block",
+          "label": "🏠",
+          "messageText": `🏠`,
+          "blockId": "5c66b0f65f38dd01ebc06a44",
+        },
+      ],
+    }
+  };
+}
+
 module.exports = {
   sendFoodParser: sendFoodParser,
   sendLibraryRestSeat: sendLibraryRestSeat,
@@ -845,4 +991,8 @@ module.exports = {
   sendCollege: sendCollege,
   sendEngiMajor: sendEngiMajor,
   sendEngiMajorSecond: sendEngiMajorSecond,
+  sendScheduleByMonth: sendScheduleByMonth,
+  sendScheduleByMonthInit: sendScheduleByMonthInit,
+  sendScheduleByMonthInit2: sendScheduleByMonthInit2,
+  sendSearchSchedule: sendSearchSchedule,
 }

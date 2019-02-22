@@ -1,5 +1,5 @@
 function sendFoodRanking (food) {
-  return {
+  let outputJson = {
     "version": "2.0",
     "template": {
       "outputs": [
@@ -11,103 +11,7 @@ function sendFoodRanking (food) {
         {
           "carousel": {
             "type": "basicCard",
-            "items": [
-              {
-                "title": `${food[0].name}`,
-                "description": `${food[0].detail}`,
-                "thumbnail": {
-                  "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
-                },
-                "buttons": [
-                  {
-                    "action": "phone",
-                    "label": "전화걸기",
-                    "phoneNumber": `${food[0].number}`
-                  },
-                  {
-                    "action":  "webLink",
-                    "label": "위치보기",
-                    "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[0].name}&tab=1`
-                  }
-                ]
-              },
-              {
-                "title": `${food[1].name}`,
-                "description": `${food[1].detail}`,
-                "thumbnail": {
-                  "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
-                },
-                "buttons": [
-                  {
-                    "action": "phone",
-                    "label": "전화걸기",
-                    "phoneNumber": `${food[1].number}`
-                  },
-                  {
-                    "action":  "webLink",
-                    "label": "위치보기",
-                    "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[1].name}&tab=1`
-                  }
-                ]
-              },
-              {
-                "title": `${food[2].name}`,
-                "description": `${food[2].detail}`,
-                "thumbnail": {
-                  "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
-                },
-                "buttons": [
-                  {
-                    "action": "phone",
-                    "label": "전화걸기",
-                    "phoneNumber": `${food[2].number}`
-                  },
-                  {
-                    "action":  "webLink",
-                    "label": "위치보기",
-                    "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[2].name}&tab=1`
-                  }
-                ]
-              },
-              {
-                "title": `${food[3].name}`,
-                "description": `${food[3].detail}`,
-                "thumbnail": {
-                  "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
-                },
-                "buttons": [
-                  {
-                    "action": "phone",
-                    "label": "전화걸기",
-                    "phoneNumber": `${food[3].number}`
-                  },
-                  {
-                    "action":  "webLink",
-                    "label": "위치보기",
-                    "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[3].name}&tab=1`
-                  }
-                ]
-              },
-              {
-                "title": `${food[4].name}`,
-                "description": `${food[4].detail}`,
-                "thumbnail": {
-                  "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
-                },
-                "buttons": [
-                  {
-                    "action": "phone",
-                    "label": "전화걸기",
-                    "phoneNumber": `${food[4].number}`
-                  },
-                  {
-                    "action":  "webLink",
-                    "label": "위치보기",
-                    "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food[4].name}&tab=1`
-                  }
-                ]
-              },
-            ]
+            "items": []
           }
         }
       ],
@@ -165,12 +69,6 @@ function sendFoodRanking (food) {
         },
         {
           "action": "block",
-          "label": "이전",
-          "messageText": `맛집`,
-          "blockId": "5c6accb505aaa75509ea69c8",
-        },
-        {
-          "action": "block",
           "label": "🏠",
           "messageText": `🏠`,
           "blockId": "5c6aceb7384c5541a0ee5bcc",
@@ -178,6 +76,41 @@ function sendFoodRanking (food) {
       ],
     }
   };
+
+  function addCarouselItem (name, detail, number, like, image){
+    return {
+      "title": `${name}`,
+      "description": `👍 ${like}\n\n${detail}`,
+      "thumbnail": {
+        "imageUrl": `${image}`
+      },
+      "buttons": [
+        {
+          "action": "phone",
+          "label": "전화걸기",
+          "phoneNumber": `${number}`
+        },
+        {
+          "action":  "webLink",
+          "label": "위치보기",
+          "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${name}&tab=1`
+        }
+      ]
+    };
+  }
+
+  for(let i = 0; i < food.length; i += 1) {
+    let imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
+    const imagesLeng = food[i].images.length;
+    if (imagesLeng > 0) {
+      const imagesRand = Math.floor(imagesLeng * Math.random());
+      imageUrl = food[i].images[imagesRand].url;
+    }
+    outputJson.template.outputs[1].carousel.items[i] = addCarouselItem(food[i].name, food[i].detail, food[i].number, food[i].like, imageUrl);
+  }
+
+  return outputJson;
+
 }
 
 function sendFoodInit (cnt) {
@@ -645,6 +578,98 @@ function sendFoodImageCarousel(text, food_id, ...args) {
   return outputJson;
 }
 
+function sendFoodRandom (food_id, food) {
+  let foodType = food.type;
+  let imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
+  const imagesLeng = food.images.length;
+  if (imagesLeng > 0) {
+    const imagesRand = Math.floor(imagesLeng * Math.random());
+    imageUrl = food.images[imagesRand].url;
+  }
+  if (foodType === '한식2') {
+    foodType = '한식';
+  }
+  return {
+    "version": "2.0",
+    "template": {
+      "outputs": [
+        {
+          "simpleText": {
+            "text": `오늘은 ${foodType}어떠세요..? ${food.name} 맛있던데!`
+          }
+        },
+        {
+          "carousel": {
+            "type": "basicCard",
+            "items": [
+              {
+                "title": `${food.name}`,
+                "description": `${food.detail}`,
+                "thumbnail": {
+                  "imageUrl": `${imageUrl}`
+                },
+                "buttons": [
+                  {
+                    "action": "block",
+                    "label": `👍 ${food.like}`,
+                    "messageText": `👍`,
+                    "blockId": '5c641ae35f38dd5839237e30'
+                  },
+                  {
+                    "action": "phone",
+                    "label": "전화걸기",
+                    "phoneNumber": `${food.number}`
+                  },
+                  {
+                    "action":  "webLink",
+                    "label": "위치보기",
+                    "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food.name}&tab=1`
+                  }
+                ]
+              },
+            ]
+          }
+        }
+      ],
+      "quickReplies": [
+        {
+          "action": "block",
+          "label": "사진보기",
+          "messageText": `${food.name} 사진보기`,
+          "blockId": "5c668bb1384c5541a0ee4fde",
+          "extra": {
+            "food_id": `${food_id}`
+          }
+        },
+        {
+          "action": "block",
+          "label": "좋아요👍",
+          "messageText": `${food.name} 좋아요👍`,
+          "blockId": "5c64175b384c553f07cd3850",
+          "extra": {
+            "food_id": `${food_id}`
+          }
+        },
+        {
+          "action": "block",
+          "label": "이전",
+          "messageText": `${foodType} 맛집 리스트!`,
+          "blockId": "5c6173795f38dd5839236bb4",
+          "extra": {
+            "food_type": `${food.type}`
+          }
+        },
+        {
+          "action": "block",
+          "label": "🏠",
+          "messageText": `🏠`,
+          "blockId": "5c66b0f65f38dd01ebc06a44",
+        },
+      ],
+    }
+  };
+}
+
 module.exports = {
   sendFoodRanking: sendFoodRanking,
   sendFoodInit: sendFoodInit,
@@ -655,4 +680,5 @@ module.exports = {
   sendNoImage: sendNoImage,
   sendFoodCarousel: sendFoodCarousel,
   sendFoodImageCarousel: sendFoodImageCarousel,
+  sendFoodRandom: sendFoodRandom,
 }

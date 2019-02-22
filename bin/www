@@ -9,6 +9,8 @@ var app = require('../app');
 var debug = require('debug')('gachonbot:server');
 var http = require('http');
 const syncDatabase = require('../database');
+const {initialize} = require('koalanlp/Util');
+
 
 /**
  * Get port from environment and store in Express.
@@ -83,6 +85,13 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
+async function initNLP(){
+  // 꼬꼬마와 은전한닢 분석기의 2.0.4 버전을 참조합니다.
+  await initialize({packages: {EUNJEON: '2.0.5'}, verbose: true});
+
+  // 초기화 다음 작업...
+}
+
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'
@@ -90,4 +99,8 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
   syncDatabase().then(() => {console.log('Database Sync Complete')});
+  initNLP().then(
+    () => console.log('initNLP Finished'),
+    (error) => console.error('Error', error)
+  );
 }

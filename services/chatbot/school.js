@@ -14,6 +14,7 @@ const {EUNJEON} = require('koalanlp/API');
 const {initialize} = require('koalanlp/Util');
 const Hangul = require('hangul-js');
 const _ = require('underscore');
+const path = require("path");
 
 const param = {};
 client.set('headers', {           // 크롤링 방지 우회를 위한 User-Agent setting
@@ -564,8 +565,8 @@ function majorParse (req,res) {
 
 //
 function searchSchedule (req,res) {
-  const user_id = req.body.userRequest.user.id;
-  let dict = fs.readFileSync('../jsonHelper/noun.json');
+  const inputText = (req.body.action.params.schedule);
+  let dict = fs.readFileSync(path.resolve(__dirname, '../jsonHelper/noun.json'));
   dict = JSON.parse(dict);
 
   function levenshtein_distance_b (s, t) {
@@ -588,12 +589,9 @@ function searchSchedule (req,res) {
       return parseFloat(matches) / parseFloat(arrayB.length);
   }
 
-  async function someAsyncFunction(){
-
-      await initialize({packages: {EUNJEON: '2.0.5'}, verbose: true});
-      let input = '등록금 언제내?';
+  (async function someAsyncFunction(){
       let tagger = new Tagger(EUNJEON);
-      let result = await tagger(input);
+      let result = await tagger(inputText);
 
       console.log(result[0].singleLineString()); // "문단을 분석합니다."의 품사분석 결과 출력
 
@@ -607,7 +605,7 @@ function searchSchedule (req,res) {
           }
         });
       });
-      console.log(input);
+      console.log(inputText);
       console.log(resultArray);
       resultArray.forEach((data,idx) => {
         let changed = 999;
@@ -615,14 +613,13 @@ function searchSchedule (req,res) {
           let value = levenshtein_distance_b(Hangul.disassemble(data).toString().replace(/,/g,''),Hangul.disassemble(data2).toString().replace(/,/g,''));
           if(value < changed) {
             changed = value;
-            // data = data2;
             resultArray[idx] = data2;
           }
         });
       });
       console.log(resultArray);
 
-      let sampleArray = fs.readFileSync('../jsonHelper/schedule.json');
+      let sampleArray = fs.readFileSync(path.resolve(__dirname, '../jsonHelper/schedule.json'));
       sampleArray = JSON.parse(sampleArray);
       let finalResult = [];
       sampleArray.forEach(data => {
@@ -631,17 +628,45 @@ function searchSchedule (req,res) {
       });
 
       return(finalResult);
-  }
-
-  someAsyncFunction().then(result => {
+  })().then(result => {
     result = result.sort((a, b) => Number(b.sim) - Number(a.sim));
     console.log(result);
-    return res.status(500).json(jsonHelper.basicJson.sendSimpleText(result[0].title + ' ' + result[0].date));
+    return res.status(200).json(jsonHelper.schoolJson.sendSearchSchedule(result));
   }).catch(err => {
     console.log(err);
     return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
   });
+}
 
+//
+function scheduleByMonthInit (req,res) {
+  return res.status(200).json(jsonHelper.schoolJson.sendScheduleByMonthInit());
+}
+
+function scheduleByMonthInit2 (req,res) {
+  return res.status(200).json(jsonHelper.schoolJson.sendScheduleByMonthInit2());
+}
+
+// 5c6fed245f38dd01ebc0a234
+function scheduleByMonth (req,res) {
+  const month = req.body.action.clientExtra.month;
+  console.log(month);
+  let url = 'http://m.gachon.ac.kr/day/day.jsp?boardType_seq=395';
+
+
+  client.fetch(url, param, function(err, $, resp){
+      if(err){
+          console.log(err);
+          return;
+      }
+      let result = '';
+      $(`#toggle-view > li:nth-child(${month}) > div`).each(function (idx) {
+        $(this).children('dl').each(function (idx2) {
+          result += `${$(this).children('dd').text().trim().split('] ')[1]}\n${$(this).children('dt').text().trim()}\n\n`
+        });
+      });
+      return res.status(200).json(jsonHelper.schoolJson.sendScheduleByMonth(month, result));
+  });
 }
 
 module.exports = {
@@ -661,5 +686,8 @@ module.exports = {
     updateMajor: updateMajor,
     majorNoticeParse: majorNoticeParse,
     majorParse: majorParse,
-    searchSchedule: searchSchedule
+    searchSchedule: searchSchedule,
+    scheduleByMonthInit: scheduleByMonthInit,
+    scheduleByMonthInit2: scheduleByMonthInit2,
+    scheduleByMonth: scheduleByMonth,
 }

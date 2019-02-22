@@ -9,6 +9,12 @@ AWS.config.loadFromPath('./awscreds.json');
 function foodRanking (req, res) {
   models.Food.findAll({
     limit: 5,
+    include: [{
+      model: models.Food_image,
+      as: 'images',
+      where: {verify: true},
+      required: false
+    }],
     order: [
         // Will escape username and validate DESC against a list of valid direction parameters
         ['like', 'DESC']
@@ -291,6 +297,28 @@ function test (req, res) {
   });
 }
 
+//
+function foodRandom (req, res) {
+  models.Food.findOne({
+    order: models.sequelize.random(),
+    include: [{
+      model: models.Food_image,
+      as: 'images',
+      where: {verify: true},
+      required: false
+    }]
+  }).then(food => {
+      if (food){
+          return res.status(200).json(jsonHelper.foodJson.sendFoodRandom(food.id, food));
+      } else {
+          // Return when no data found
+          return res.status(403).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'))
+      }
+  }).catch(function (err){
+    return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'))
+  });
+}
+
 module.exports = {
     foodRanking: foodRanking,
     foodInit: foodInit,
@@ -301,4 +329,5 @@ module.exports = {
     foodImage: foodImage,
     imageUpload: imageUpload,
     test: test,
+    foodRandom: foodRandom,
 }

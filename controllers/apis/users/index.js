@@ -33,18 +33,22 @@ router.post('/updateMajor', chatbot.school.updateMajor);
 router.post('/majorNoticeParse', chatbot.school.majorNoticeParse);
 router.post('/majorParse', chatbot.school.majorParse);
 router.post('/searchSchedule', chatbot.school.searchSchedule);
+router.post('/scheduleByMonthInit', chatbot.school.scheduleByMonthInit);
+router.post('/scheduleByMonthInit2', chatbot.school.scheduleByMonthInit2);
+router.post('/scheduleByMonth', chatbot.school.scheduleByMonth);
 /*
  * food (맛집관련)
  */
- router.post('/foodRanking', chatbot.food.foodRanking);
- router.post('/foodInit', chatbot.food.foodInit);
- router.post('/foodByType', chatbot.food.foodByType);
- router.post('/foodDetail', chatbot.food.foodDetail);
- router.post('/foodLike', chatbot.food.foodLike);
- router.post('/failLike', chatbot.food.failLike);
- router.post('/foodImage', chatbot.food.foodImage);
- router.post('/imageUpload', chatbot.food.imageUpload);
-  router.post('/test', chatbot.food.test);
+router.post('/foodRanking', chatbot.food.foodRanking);
+router.post('/foodInit', chatbot.food.foodInit);
+router.post('/foodByType', chatbot.food.foodByType);
+router.post('/foodDetail', chatbot.food.foodDetail);
+router.post('/foodLike', chatbot.food.foodLike);
+router.post('/failLike', chatbot.food.failLike);
+router.post('/foodImage', chatbot.food.foodImage);
+router.post('/imageUpload', chatbot.food.imageUpload);
+router.post('/foodRandom', chatbot.food.foodRandom);
+router.post('/test', chatbot.food.test);
 
 /*
  * basic (기타)
