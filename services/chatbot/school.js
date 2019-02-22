@@ -8,6 +8,12 @@ const jsonHelper = require('../jsonHelper');
 const {Builder, By, Key, until} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const cheerio = require('cheerio');
+const fs = require('fs');
+const {Tagger} = require('koalanlp/proc');
+const {EUNJEON} = require('koalanlp/API');
+const {initialize} = require('koalanlp/Util');
+const Hangul = require('hangul-js');
+const _ = require('underscore');
 
 const param = {};
 client.set('headers', {           // 크롤링 방지 우회를 위한 User-Agent setting
@@ -556,6 +562,88 @@ function majorParse (req,res) {
   });
 }
 
+//
+function searchSchedule (req,res) {
+  const user_id = req.body.userRequest.user.id;
+  let dict = fs.readFileSync('../jsonHelper/noun.json');
+  dict = JSON.parse(dict);
+
+  function levenshtein_distance_b (s, t) {
+        if (!s.length) return t.length;
+        if (!t.length) return s.length;
+
+        return Math.min(
+            levenshtein_distance_b(s.substr(1), t) + 1,
+            levenshtein_distance_b(t.substr(1), s) + 1,
+            levenshtein_distance_b(s.substr(1), t.substr(1)) + (s[0] !== t[0] ? 1 : 0)
+        );
+  }
+
+  function count_similarities(arrayA, arrayB) {
+      var matches = 0;
+      for (i=0;i<arrayA.length;i++) {
+          if (arrayB.indexOf(arrayA[i]) != -1)
+              matches++;
+      }
+      return parseFloat(matches) / parseFloat(arrayB.length);
+  }
+
+  async function someAsyncFunction(){
+
+      await initialize({packages: {EUNJEON: '2.0.5'}, verbose: true});
+      let input = '등록금 언제내?';
+      let tagger = new Tagger(EUNJEON);
+      let result = await tagger(input);
+
+      console.log(result[0].singleLineString()); // "문단을 분석합니다."의 품사분석 결과 출력
+
+
+      let resultArray = [];
+      result = result[0];
+      result.forEach(data => {
+        data._items.forEach(data2 => {
+          if(data2._tag === "NNG" || data2._tag === "NNP") {
+            resultArray.push(data2._surface);
+          }
+        });
+      });
+      console.log(input);
+      console.log(resultArray);
+      resultArray.forEach((data,idx) => {
+        let changed = 999;
+        dict.forEach(data2 => {
+          let value = levenshtein_distance_b(Hangul.disassemble(data).toString().replace(/,/g,''),Hangul.disassemble(data2).toString().replace(/,/g,''));
+          if(value < changed) {
+            changed = value;
+            // data = data2;
+            resultArray[idx] = data2;
+          }
+        });
+      });
+      console.log(resultArray);
+
+      let sampleArray = fs.readFileSync('../jsonHelper/schedule.json');
+      sampleArray = JSON.parse(sampleArray);
+      let finalResult = [];
+      sampleArray.forEach(data => {
+        let resultSimil = count_similarities(resultArray,data.noun);
+        finalResult.push({title: data.title, date: data.date, sim: resultSimil})
+      });
+
+      return(finalResult);
+  }
+
+  someAsyncFunction().then(result => {
+    result = result.sort((a, b) => Number(b.sim) - Number(a.sim));
+    console.log(result);
+    return res.status(500).json(jsonHelper.basicJson.sendSimpleText(result[0].title + ' ' + result[0].date));
+  }).catch(err => {
+    console.log(err);
+    return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
+  });
+
+}
+
 module.exports = {
     libraryRestSeat: libraryRestSeat,
     noticeParse: noticeParse,
@@ -573,4 +661,5 @@ module.exports = {
     updateMajor: updateMajor,
     majorNoticeParse: majorNoticeParse,
     majorParse: majorParse,
+    searchSchedule: searchSchedule
 }

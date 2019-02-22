@@ -32,6 +32,7 @@ router.post('/selectMajor', chatbot.school.selectMajor);
 router.post('/updateMajor', chatbot.school.updateMajor);
 router.post('/majorNoticeParse', chatbot.school.majorNoticeParse);
 router.post('/majorParse', chatbot.school.majorParse);
+router.post('/searchSchedule', chatbot.school.searchSchedule);
 /*
  * food (맛집관련)
  */
