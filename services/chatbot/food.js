@@ -70,10 +70,10 @@ function foodByType (req, res) {
 
 // blockID: 5c64110de8212717d2bfaabc
 function foodDetail (req, res) {
-  const food_id = req.body.action.clientExtra.food_id;
+  const food_name = req.body.userRequest.utterance;
   models.Food.findOne({
     where: {
-        id: food_id
+        name: food_name
     },
     include: [{
       model: models.Food_image,
@@ -84,7 +84,7 @@ function foodDetail (req, res) {
   }).then(food => {
     console.log(JSON.stringify(food));
       if (food){
-          return res.status(200).json(jsonHelper.foodJson.sendFoodDetail(food_id, food));
+          return res.status(200).json(jsonHelper.foodJson.sendFoodDetail(food));
       } else {
           // Return when no data found
           return res.status(403).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'))
@@ -141,7 +141,6 @@ function foodLike (req, res) {
                     return res.status(403).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
                   })
                 } else {
-                  console.log(err.message);
                   return res.status(403).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
                 }
             }).catch(err => {
@@ -149,7 +148,6 @@ function foodLike (req, res) {
               return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
             });
           } else {
-            console.log(err.message);
             return res.status(403).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
           }
         }).catch(err => {
@@ -157,8 +155,15 @@ function foodLike (req, res) {
           return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
         });
       } else {
-        console.log(err.message);
-        return res.status(200).json(jsonHelper.foodJson.sendFoodLikeN(food_id));
+        models.Food.findOne({
+          where: {
+              id: food_id
+          }
+        }).then(food => {
+          return res.status(200).json(jsonHelper.foodJson.sendFoodLikeN(food.name));
+        }).catch(err => {
+          return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
+        })
       }
     }).catch(err => {
       console.log(err.message);
@@ -204,7 +209,20 @@ function foodImage (req, res) {
     order: models.sequelize.random()
   }).then(image => {
       if (image.length > 0){
-        return res.status(200).json(jsonHelper.foodJson.sendFoodImageCarousel(`JMT!`, food_id, image));
+        models.Food.findOne({
+          where: {
+              id: food_id
+          },
+        }).then(food => {
+            if (food){
+                return res.status(200).json(jsonHelper.foodJson.sendFoodImageCarousel(`JMT!`, food_id, food.name, image));
+            } else {
+                // Return when no data found
+                return res.status(403).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'))
+            }
+        }).catch(function (err){
+          return res.status(500).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'))
+        });
       } else {
         return res.status(200).json(jsonHelper.foodJson.sendNoImage(food_id));
       }

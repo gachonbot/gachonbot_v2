@@ -70,13 +70,16 @@ let air_scheduler = schedule.scheduleJob('25 * * * *', function(){
 function foodParser (req, res) {
   let placeParam = (req.body.action.params.place);
   let url = 'http://m.gachon.ac.kr/menu/menu.jsp';
+  let image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/art.png';
 
   switch (placeParam) {
     case '교육대학원':
       url = 'http://m.gachon.ac.kr/menu/menu.jsp?gubun=B';
+      image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/areum.png'
     break;
     case '비전타워':
       url = 'http://m.gachon.ac.kr/menu/menu.jsp?gubun=C';
+      image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/vision.png'
     break;
   }
 
@@ -88,8 +91,11 @@ function foodParser (req, res) {
           return;
       }
       let foodResult = $(`#toggle-view > li:nth-child(${day}) > dl`).text().trim();
+      if (day === 0) {
+        foodResult = '주말에는 운영하지 않아요!';
+      }
 
-      return res.status(200).json(jsonHelper.schoolJson.sendFoodParser(foodResult));
+      return res.status(200).json(jsonHelper.schoolJson.sendFoodParser(foodResult, image));
   });
 }
 
@@ -165,7 +171,28 @@ function getWeather (req, res) {
   }).then(weather => {
       console.log(weather);
       if (weather){
-          return res.status(200).json(jsonHelper.schoolJson.sendGetWeather(weather));
+        const weatherName = weather.name;
+        let weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/weather.png';
+        switch (weatherName) {
+          case '맑음':
+            weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/sunny.jpg';
+          break;
+          case '구름조금':
+            weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/cloudy.jpg';
+          break;
+          case '구름많음':
+            weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/cloudy.jpg';
+          break;
+          case '흐림':
+            weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/foggy.jpg';
+          break;
+        }
+        if (weatherName.includes('비')) {
+          weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/rainy.jpg';
+        } else if(weatherName.includes('눈')) {
+          weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/snowy.jpg';
+        }
+          return res.status(200).json(jsonHelper.schoolJson.sendGetWeather(weather, weatherImage));
       } else {
           console.log(err.message);
           return res.status(403).json(jsonHelper.basicJson.sendSimpleText('오류가 발생했습니다. 다시 시도해주세요!'));
@@ -186,6 +213,7 @@ function getAir (req, res) {
       if (air){
         let pm10grade;
         let pm25grade;
+        let image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/dust.jpg';
         switch (air.grade_10) {
           case 1:
             pm10grade = '좋음';
@@ -214,7 +242,7 @@ function getAir (req, res) {
             pm25grade = '매우나쁨';
           break;
         }
-          return res.status(200).json(jsonHelper.schoolJson.sendGetAir(air, pm10grade, pm25grade));
+          return res.status(200).json(jsonHelper.schoolJson.sendGetAir(air, pm10grade, pm25grade, image));
       } else {
           // Return when no data found
           console.log(err.message);

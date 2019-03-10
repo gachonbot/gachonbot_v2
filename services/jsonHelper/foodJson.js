@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 function sendFoodRanking (food) {
   let outputJson = {
     "version": "2.0",
@@ -16,70 +18,13 @@ function sendFoodRanking (food) {
         }
       ],
       "quickReplies": [
-        {
-          "action": "block",
-          "label": `${food[0].name}`,
-          "messageText": `${food[0].name}`,
-          "blockId": `5c64110de8212717d2bfaabc`,
-          "extra": {
-            "food_id": `${food[0].id}`
-          }
-        },
-        {
-          "action": "block",
-          "label": `${food[1].name}`,
-          "messageText": `${food[1].name}`,
-          "blockId": `5c64110de8212717d2bfaabc`,
-          "extra": {
-            "food_id": `${food[1].id}`
-          }
-        },
-        {
-          "action": "block",
-          "label": `${food[2].name}`,
-          "messageText": `${food[2].name}`,
-          "blockId": `5c64110de8212717d2bfaabc`,
-          "extra": {
-            "food_id": `${food[2].id}`
-          }
-        },
-        {
-          "action": "block",
-          "label": `${food[3].name}`,
-          "messageText": `${food[3].name}`,
-          "blockId": `5c64110de8212717d2bfaabc`,
-          "extra": {
-            "food_id": `${food[3].id}`
-          }
-        },
-        {
-          "action": "block",
-          "label": `${food[4].name}`,
-          "messageText": `${food[4].name}`,
-          "blockId": `5c64110de8212717d2bfaabc`,
-          "extra": {
-            "food_id": `${food[4].id}`
-          }
-        },
-        {
-          "action": "block",
-          "label": "이전",
-          "messageText": `맛집`,
-          "blockId": "5c6accb505aaa75509ea69c8",
-        },
-        {
-          "action": "block",
-          "label": "🏠",
-          "messageText": `🏠`,
-          "blockId": "5c6aceb7384c5541a0ee5bcc",
-        },
       ],
     }
   };
 
   function addCarouselItem (name, detail, number, like, image){
     return {
-      "title": `${name}`,
+      "title": `${name}   (👍${like})`,
       "description": `${detail}`,
       "thumbnail": {
         "imageUrl": `${image}`
@@ -87,26 +32,20 @@ function sendFoodRanking (food) {
       "buttons": [
         {
           "action": "block",
-          "label": `👍 ${like}`,
-          "messageText": `👍`,
-          "blockId": '5c641ae35f38dd5839237e30'
+          "label": "자세히보기",
+          "messageText": `${name}`,
+          "blockId": "5c64110de8212717d2bfaabc"
         },
         {
-          "action": "phone",
-          "label": "전화걸기",
-          "phoneNumber": `${number}`
-        },
-        {
-          "action":  "webLink",
-          "label": "위치보기",
-          "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${name}&tab=1`
+          "action":  "share",
+          "label": "공유하기",
         }
       ]
     };
   }
 
   for(let i = 0; i < food.length; i += 1) {
-    let imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
+    let imageUrl = `${process.env.FOOD_IMAGE}`;
     const imagesLeng = food[i].images.length;
     if (imagesLeng > 0) {
       const imagesRand = Math.floor(imagesLeng * Math.random());
@@ -223,8 +162,9 @@ function sendFoodInit (cnt) {
   };
 }
 
-function sendFoodDetail (food_id, food) {
-  let imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
+function sendFoodDetail (food) {
+  console.log(food.where);
+  let imageUrl = `${process.env.FOOD_IMAGE}`;
   const imagesLeng = food.images.length;
   if (imagesLeng > 0) {
     const imagesRand = Math.floor(imagesLeng * Math.random());
@@ -239,18 +179,12 @@ function sendFoodDetail (food_id, food) {
             "type": "basicCard",
             "items": [
               {
-                "title": `${food.name}`,
+                "title": `${food.name}   (👍${food.like})`,
                 "description": `${food.detail}`,
                 "thumbnail": {
                   "imageUrl": `${imageUrl}`
                 },
                 "buttons": [
-                  {
-                    "action": "block",
-                    "label": `👍 ${food.like}`,
-                    "messageText": `👍`,
-                    "blockId": '5c641ae35f38dd5839237e30'
-                  },
                   {
                     "action": "phone",
                     "label": "전화걸기",
@@ -259,7 +193,11 @@ function sendFoodDetail (food_id, food) {
                   {
                     "action":  "webLink",
                     "label": "위치보기",
-                    "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food.name}&tab=1`
+                    "webLinkUrl": `https://map.kakao.com/?q=가천대 ${food.name}`
+                  },
+                  {
+                    "action":  "share",
+                    "label": "공유하기",
                   }
                 ]
               },
@@ -274,7 +212,7 @@ function sendFoodDetail (food_id, food) {
           "messageText": `${food.name} 사진보기`,
           "blockId": "5c668bb1384c5541a0ee4fde",
           "extra": {
-            "food_id": `${food_id}`
+            "food_id": `${food.id}`
           }
         },
         {
@@ -283,7 +221,7 @@ function sendFoodDetail (food_id, food) {
           "messageText": `${food.name} 좋아요👍`,
           "blockId": "5c64175b384c553f07cd3850",
           "extra": {
-            "food_id": `${food_id}`
+            "food_id": `${food.id}`
           }
         },
         {
@@ -338,7 +276,7 @@ function sendFoodLikeY (food_id, food) {
   };
 }
 
-function sendFoodLikeN (food_id) {
+function sendFoodLikeN (name) {
   return {
     "version": "2.0",
     "template": {
@@ -353,11 +291,8 @@ function sendFoodLikeN (food_id) {
         {
           "action": "block",
           "label": "이전",
-          "messageText": `이전`,
+          "messageText": `${name}`,
           "blockId": "5c64110de8212717d2bfaabc",
-          "extra": {
-            "food_id": `${food_id}`
-          }
         },
         {
           "action": "block",
@@ -476,18 +411,10 @@ function sendFoodCarousel(text, food) {
       },
       "buttons": [
         {
-          "action": "phone",
-          "label": "전화걸기",
-          "phoneNumber": `${number}`
-        },
-        {
-          "action": "osLink",
-          "label": "위치보기",
-          "osLink": {
-            "mobile": `http://map.daum.net/link/search/${name}`,
-            "mac": `http://map.daum.net/link/search/${name}`,
-            "android": `http://map.daum.net/link/search/${name}`
-          }
+          "action": "block",
+          "label": "자세히보기",
+          "messageText": `${name}`,
+          "blockId": "5c64110de8212717d2bfaabc"
         },
         {
           "action":  "share",
@@ -497,34 +424,20 @@ function sendFoodCarousel(text, food) {
     };
   }
 
-  function addQuickReply (name, block_id, id) {
-    return {
-      "action": "block",
-      "label": `${name}`,
-      "messageText": `${name}`,
-      "blockId": `${block_id}`,
-      "extra": {
-        "food_id": `${id}`
-      }
-    };
-  }
-
-
   for(let i = 0; i < food.length; i += 1) {
-    let imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
+    let imageUrl = `${process.env.FOOD_IMAGE}`;
     const imagesLeng = food[i].images.length;
     if (imagesLeng > 0) {
       const imagesRand = Math.floor(imagesLeng * Math.random());
       imageUrl = food[i].images[imagesRand].url;
     }
     outputJson.template.outputs[1].carousel.items[i] = addCarouselItem(food[i].name, food[i].detail, food[i].number, imageUrl);
-    outputJson.template.quickReplies[i] = addQuickReply(food[i].name, '5c64110de8212717d2bfaabc', food[i].id);
   }
 
   return outputJson;
 }
 
-function sendFoodImageCarousel(text, food_id, ...args) {
+function sendFoodImageCarousel(text, food_id, food_name, ...args) {
   let outputJson = {
     "version": "2.0",
     "template": {
@@ -566,10 +479,10 @@ function sendFoodImageCarousel(text, food_id, ...args) {
     };
   }
 
-  function addQuickReply (name, block_id, id) {
+  function addQuickReply (label, name, block_id, id) {
     return {
       "action": "block",
-      "label": `${name}`,
+      "label": `${label}`,
       "messageText": `${name}`,
       "blockId": `${block_id}`,
       "extra": {
@@ -582,15 +495,15 @@ function sendFoodImageCarousel(text, food_id, ...args) {
   for(let i = 0; i < args[0].length; i += 1) {
     outputJson.template.outputs[1].carousel.items[i] = addImageCarouselItem(args[0][i].url, args[0][i].source);
   }
-  outputJson.template.quickReplies[0] = addQuickReply('이미지 업로드', '5c68310e384c5541a0ee51e6', food_id);
-  outputJson.template.quickReplies[1] = addQuickReply('이전', '5c64110de8212717d2bfaabc', food_id);
-  outputJson.template.quickReplies[2] = addQuickReply('🏠', '5c66b0f65f38dd01ebc06a44', food_id);
+  outputJson.template.quickReplies[0] = addQuickReply('이미지 업로드', '이미지 업로드', '5c68310e384c5541a0ee51e6', food_id);
+  outputJson.template.quickReplies[1] = addQuickReply('이전', food_name, '5c64110de8212717d2bfaabc', food_id);
+  outputJson.template.quickReplies[2] = addQuickReply('🏠', '🏠', '5c66b0f65f38dd01ebc06a44', food_id);
   return outputJson;
 }
 
 function sendFoodRandom (food_id, food) {
   let foodType = food.type;
-  let imageUrl = "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg";
+  let imageUrl = `${process.env.FOOD_IMAGE}`;
   const imagesLeng = food.images.length;
   if (imagesLeng > 0) {
     const imagesRand = Math.floor(imagesLeng * Math.random());
@@ -620,20 +533,22 @@ function sendFoodRandom (food_id, food) {
                 },
                 "buttons": [
                   {
-                    "action": "block",
-                    "label": `👍 ${food.like}`,
-                    "messageText": `👍`,
-                    "blockId": '5c641ae35f38dd5839237e30'
-                  },
-                  {
                     "action": "phone",
                     "label": "전화걸기",
                     "phoneNumber": `${food.number}`
                   },
                   {
-                    "action":  "webLink",
+                    "action": "osLink",
                     "label": "위치보기",
-                    "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${food.name}&tab=1`
+                    "osLink": {
+                      "mobile": `https://map.kakao.com/?q=가천대 ${food.name}`,
+                      "ios": `https://map.kakao.com/?q=가천대 ${food.name}`,
+                      "android": `https://map.kakao.com/?q=가천대 ${food.name}`
+                    }
+                  },
+                  {
+                    "action":  "share",
+                    "label": "공유하기",
                   }
                 ]
               },

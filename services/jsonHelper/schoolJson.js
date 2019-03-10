@@ -1,16 +1,21 @@
-function sendFoodParser (foodResult) {
+require('dotenv').config()
+
+function sendFoodParser (foodResult, image) {
   return {
       "version": "2.0",
       "template": {
           "outputs": [
-              {
-                "basicCard": {
-                  "description": `${foodResult}`,
-                  "thumbnail": {
-                    "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
-                  },
+            {
+                "simpleImage": {
+                    "imageUrl": `${image}`,
+                    "altText": "image"
                 }
+            },
+            {
+              "simpleText": {
+                "text": `${foodResult}`
               }
+            },
           ],
           "quickReplies": [
             {
@@ -44,33 +49,33 @@ function sendLibraryRestSeat (restSeat, totalSeat) {
           "listCard": {
             "header": {
               "title": "중앙도서관 여석 현황",
-              "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
+              "imageUrl": `${process.env.NOTICE_IMAGE}`
             },
             "items": [
               {
                 "title": "형설열람석",
                 "description": `${restSeat[0]} / ${totalSeat[0]}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
               {
                 "title": "탐구열람실",
                 "description": `${restSeat[1]} / ${totalSeat[1]}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/N4Epz/btqqHCfF5II/a3kMRckYml1NLPEo7nqTmK/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
               {
                 "title": "나눔열람실",
                 "description": `${restSeat[2]} / ${totalSeat[2]}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/bE8AKO/btqqFHI6vDQ/mWZGNbLIOlTv3oVF1gzXKK/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
               {
                 "title": "창의열람실",
                 "description": `${restSeat[3]} / ${totalSeat[3]}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/bE8AKO/btqqFHI6vDQ/mWZGNbLIOlTv3oVF1gzXKK/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
               {
                 "title": "노트북열람실",
                 "description": `${restSeat[4]} / ${totalSeat[4]}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/bE8AKO/btqqFHI6vDQ/mWZGNbLIOlTv3oVF1gzXKK/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               }
             ],
             "buttons": [
@@ -110,13 +115,13 @@ function sendNoticeParse (noticeArray) {
           "listCard": {
             "header": {
               "title": "공지사항",
-              "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
+              "imageUrl": `${process.env.NOTICE_IMAGE}`,
             },
             "items": [
               {
                 "title": `${noticeArray[0].title}`,
                 "description": `${noticeArray[0].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[0].url}`
                 }
@@ -124,7 +129,7 @@ function sendNoticeParse (noticeArray) {
               {
                 "title": `${noticeArray[1].title}`,
                 "description": `${noticeArray[1].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[1].url}`
                 }
@@ -132,7 +137,7 @@ function sendNoticeParse (noticeArray) {
               {
                 "title": `${noticeArray[2].title}`,
                 "description": `${noticeArray[2].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[2].url}`
                 }
@@ -140,7 +145,7 @@ function sendNoticeParse (noticeArray) {
               {
                 "title": `${noticeArray[3].title}`,
                 "description": `${noticeArray[3].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[3].url}`
                 }
@@ -148,7 +153,7 @@ function sendNoticeParse (noticeArray) {
               {
                 "title": `${noticeArray[4].title}`,
                 "description": `${noticeArray[4].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[4].url}`
                 }
@@ -191,13 +196,13 @@ function sendScholarParse (noticeArray) {
           "listCard": {
             "header": {
               "title": "장학소식",
-              "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
+              "imageUrl": `${process.env.NOTICE_IMAGE}`,
             },
             "items": [
               {
                 "title": `${noticeArray[0].title}`,
                 "description": `${noticeArray[0].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[0].url}`
                 }
@@ -205,7 +210,7 @@ function sendScholarParse (noticeArray) {
               {
                 "title": `${noticeArray[1].title}`,
                 "description": `${noticeArray[1].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[1].url}`
                 }
@@ -213,7 +218,7 @@ function sendScholarParse (noticeArray) {
               {
                 "title": `${noticeArray[2].title}`,
                 "description": `${noticeArray[2].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[2].url}`
                 }
@@ -221,7 +226,7 @@ function sendScholarParse (noticeArray) {
               {
                 "title": `${noticeArray[3].title}`,
                 "description": `${noticeArray[3].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[3].url}`
                 }
@@ -229,7 +234,7 @@ function sendScholarParse (noticeArray) {
               {
                 "title": `${noticeArray[4].title}`,
                 "description": `${noticeArray[4].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[4].url}`
                 }
@@ -263,7 +268,7 @@ function sendScholarParse (noticeArray) {
   };
 }
 
-function sendGetWeather (weather) {
+function sendGetWeather (weather, image) {
   return {
     "version": "2.0",
     "template": {
@@ -281,7 +286,7 @@ function sendGetWeather (weather) {
                 "title": `${weather.name}`,
                 "description": `현재기온: ${weather.tc} ℃\n오늘의 최저기온: ${weather.tmin} ℃\n오늘의 최고기온: ${weather.tmax} ℃\n습도: ${weather.humidity} %`,
                 "thumbnail": {
-                  "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                  "imageUrl": `${image}`
                 },
               },
             ]
@@ -300,7 +305,7 @@ function sendGetWeather (weather) {
   };
 }
 
-function sendGetAir (air, pm10grade, pm25grade) {
+function sendGetAir (air, pm10grade, pm25grade, image) {
   return {
     "version": "2.0",
     "template": {
@@ -318,7 +323,7 @@ function sendGetAir (air, pm10grade, pm25grade) {
                 "title": `${pm10grade}`,
                 "description": `미세먼지 지수: ${air.pm_10} (pm10)\n\n초미세먼지: ${pm25grade}\n초미세먼지 지수: ${air.pm_25} (pm25)`,
                 "thumbnail": {
-                  "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                  "imageUrl": `${image}`
                 },
               },
             ]
@@ -422,33 +427,33 @@ function sendElecLibrary1F (multiView, multiEdit, congressEdit, infoSearch, note
           "listCard": {
             "header": {
               "title": "전자정보도서관 1F 여석 현황",
-              "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
+              "imageUrl": `${process.env.NOTICE_IMAGE}`,
             },
             "items": [
               {
                 "title": "멀티미디어열람석",
                 "description": `${22 - multiView} / 22`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
               {
                 "title": "멀티미디어편집",
                 "description": `${8 - multiEdit} / 8`,
-                "imageUrl": "http://k.kakaocdn.net/dn/N4Epz/btqqHCfF5II/a3kMRckYml1NLPEo7nqTmK/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
               {
                 "title": "국회자료편집",
                 "description": `${8 - congressEdit} / 8`,
-                "imageUrl": "http://k.kakaocdn.net/dn/bE8AKO/btqqFHI6vDQ/mWZGNbLIOlTv3oVF1gzXKK/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
               {
                 "title": "정보검색",
                 "description": `${32 - infoSearch} / 32`,
-                "imageUrl": "http://k.kakaocdn.net/dn/bE8AKO/btqqFHI6vDQ/mWZGNbLIOlTv3oVF1gzXKK/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
               {
                 "title": "노트북열람석",
                 "description": `${15 - notebook} / 15`,
-                "imageUrl": "http://k.kakaocdn.net/dn/bE8AKO/btqqFHI6vDQ/mWZGNbLIOlTv3oVF1gzXKK/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               }
             ],
             "buttons": [
@@ -493,18 +498,18 @@ function sendElecLibrary2F (general, notebook) {
           "listCard": {
             "header": {
               "title": "전자정보도서관 2F 여석 현황",
-              "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
+              "imageUrl": `${process.env.NOTICE_IMAGE}`,
             },
             "items": [
               {
                 "title": "일반열람실",
                 "description": `${84 - general} / 84`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
               {
                 "title": "노트북열람실",
                 "description": `${54 - notebook} / 54`,
-                "imageUrl": "http://k.kakaocdn.net/dn/N4Epz/btqqHCfF5II/a3kMRckYml1NLPEo7nqTmK/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
               },
             ],
             "buttons": [
@@ -544,13 +549,13 @@ function sendMajorNoticeParse (userMajor, noticeArray, major) {
           "listCard": {
             "header": {
               "title": `${userMajor} 공지사항`,
-              "imageUrl": "http://k.kakaocdn.net/dn/xsBdT/btqqIzbK4Hc/F39JI8XNVDMP9jPvoVdxl1/2x1.jpg"
+              "imageUrl": `${process.env.NOTICE_IMAGE}`,
             },
             "items": [
               {
                 "title": `${noticeArray[0].title}`,
                 "description": `${noticeArray[0].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[0].url}`
                 }
@@ -558,7 +563,7 @@ function sendMajorNoticeParse (userMajor, noticeArray, major) {
               {
                 "title": `${noticeArray[1].title}`,
                 "description": `${noticeArray[1].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[1].url}`
                 }
@@ -566,7 +571,7 @@ function sendMajorNoticeParse (userMajor, noticeArray, major) {
               {
                 "title": `${noticeArray[2].title}`,
                 "description": `${noticeArray[2].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[2].url}`
                 }
@@ -574,7 +579,7 @@ function sendMajorNoticeParse (userMajor, noticeArray, major) {
               {
                 "title": `${noticeArray[3].title}`,
                 "description": `${noticeArray[3].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[3].url}`
                 }
@@ -582,7 +587,7 @@ function sendMajorNoticeParse (userMajor, noticeArray, major) {
               {
                 "title": `${noticeArray[4].title}`,
                 "description": `${noticeArray[4].date}`,
-                "imageUrl": "http://k.kakaocdn.net/dn/APR96/btqqH7zLanY/kD5mIPX7TdD2NAxgP29cC0/1x1.jpg",
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
                 "link": {
                   "web": `${noticeArray[4].url}`
                 }
@@ -625,7 +630,7 @@ function sendMajorParse (userMajor, major) {
           "basicCard": {
             "title": `${userMajor}`,
             "thumbnail": {
-              "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+              "imageUrl": `https://s3.ap-northeast-2.amazonaws.com/gachonbot/vision.png`,
             },
             "buttons": [
               {
@@ -838,7 +843,7 @@ function sendScheduleByMonth (month, result) {
                   "title": `${month}월 학사일정`,
                   "description": `${result}`,
                   "thumbnail": {
-                    "imageUrl": "http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg"
+                    "imageUrl": `https://s3.ap-northeast-2.amazonaws.com/gachonbot/vision.png`,
                   },
                 }
               }
