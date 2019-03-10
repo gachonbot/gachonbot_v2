@@ -481,9 +481,13 @@ function sendFoodCarousel(text, food) {
           "phoneNumber": `${number}`
         },
         {
-          "action":  "webLink",
+          "action": "osLink",
           "label": "위치보기",
-          "webLinkUrl": `https://map.naver.com/index.nhn?query=가천대 ${name}&tab=1`
+          "osLink": {
+            "mobile": `http://map.daum.net/link/search/${name}`,
+            "mac": `http://map.daum.net/link/search/${name}`,
+            "android": `http://map.daum.net/link/search/${name}`
+          }
         },
         {
           "action":  "share",
