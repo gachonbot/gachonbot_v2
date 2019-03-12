@@ -701,6 +701,28 @@ function scheduleByMonth (req,res) {
   });
 }
 
+function workParse (req, res) {
+  let url = 'http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=773';
+
+  client.fetch(url, param, function(err, $, resp){
+      if(err){
+          console.log(err);
+          return;
+      }
+      let noticeArray = [];
+
+      $('#contnet > div.list > ul > li').each(function (idx) {
+        if($(this).children('img').attr('alt') === '공지') {
+
+        } else {
+          noticeArray.push({title: $(this).children('a').text().trim().replace(/\n/g, ' ').replace('               ',' '), url: 'http://m.gachon.ac.kr/gachon/'+$(this).children('a').attr('href'), date: $(this).children('span').text().replace(/ /g, '')});
+        }
+      });
+
+      return res.status(200).json(jsonHelper.schoolJson.sendWorkParse(noticeArray));
+  });
+}
+
 module.exports = {
     libraryRestSeat: libraryRestSeat,
     noticeParse: noticeParse,
@@ -722,4 +744,5 @@ module.exports = {
     scheduleByMonthInit: scheduleByMonthInit,
     scheduleByMonthInit2: scheduleByMonthInit2,
     scheduleByMonth: scheduleByMonth,
+    workParse: workParse,
 }

@@ -979,6 +979,87 @@ function sendSearchSchedule (schedule) {
   };
 }
 
+function sendWorkParse (noticeArray) {
+  return {
+    "version": "2.0",
+    "template": {
+      "outputs": [
+        {
+          "listCard": {
+            "header": {
+              "title": "취업소식",
+              "imageUrl": `${process.env.NOTICE_IMAGE}`,
+            },
+            "items": [
+              {
+                "title": `${noticeArray[0].title}`,
+                "description": `${noticeArray[0].date}`,
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
+                "link": {
+                  "web": `${noticeArray[0].url}`
+                }
+              },
+              {
+                "title": `${noticeArray[1].title}`,
+                "description": `${noticeArray[1].date}`,
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
+                "link": {
+                  "web": `${noticeArray[1].url}`
+                }
+              },
+              {
+                "title": `${noticeArray[2].title}`,
+                "description": `${noticeArray[2].date}`,
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
+                "link": {
+                  "web": `${noticeArray[2].url}`
+                }
+              },
+              {
+                "title": `${noticeArray[3].title}`,
+                "description": `${noticeArray[3].date}`,
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
+                "link": {
+                  "web": `${noticeArray[3].url}`
+                }
+              },
+              {
+                "title": `${noticeArray[4].title}`,
+                "description": `${noticeArray[4].date}`,
+                "imageUrl": `${process.env.NOTICE_ICON_IMAGE}`,
+                "link": {
+                  "web": `${noticeArray[4].url}`
+                }
+              }
+            ],
+            "buttons": [
+              {
+                "label": "취업소식 더보기",
+                "action": "webLink",
+                "webLinkUrl": "http://m.gachon.ac.kr/gachon/notice.jsp?boardType_seq=773"
+              }
+            ]
+          }
+        }
+      ],
+      "quickReplies": [
+        {
+          "action": "block",
+          "label": "이전",
+          "messageText": `학사`,
+          "blockId": "5c6acb2f384c5541a0ee5bc1",
+        },
+        {
+          "action": "block",
+          "label": "🏠",
+          "messageText": `🏠`,
+          "blockId": "5c6aceb7384c5541a0ee5bcc",
+        },
+      ],
+    }
+  };
+}
+
 module.exports = {
   sendFoodParser: sendFoodParser,
   sendLibraryRestSeat: sendLibraryRestSeat,
@@ -1000,4 +1081,5 @@ module.exports = {
   sendScheduleByMonthInit: sendScheduleByMonthInit,
   sendScheduleByMonthInit2: sendScheduleByMonthInit2,
   sendSearchSchedule: sendSearchSchedule,
+  sendWorkParse: sendWorkParse,
 }
