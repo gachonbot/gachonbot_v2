@@ -101,7 +101,7 @@ function foodParser (req, res) {
           day = 7;
         }
         let foodSelector = $(`#container > div.substance > div.sub_contents > table > tbody > tr:nth-child(${day})`);
-        foodResult = `${$(foodSelector).children('th').text().trim()}\n\n아침\n${$(foodSelector).children('td').first().text().trim()}\n\n점심\n${$(foodSelector).children('td').last().prev().text().trim()}\n\n저녁\n${$(foodSelector).children('td').last().prev().text().trim()}`;
+        foodResult = `${$(foodSelector).children('th').text().trim()}\n\n아침\n${$(foodSelector).children('td').first().text().trim()}\n\n점심\n${$(foodSelector).children('td').last().prev().text().trim()}\n\n저녁\n${$(foodSelector).children('td').last().text().trim()}`;
       } else {
         foodResult = $(`#toggle-view > li:nth-child(${day}) > dl`).text().trim();
         if (day === 0) {

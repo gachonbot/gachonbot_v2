@@ -81,8 +81,8 @@ function sendHomeMenu () {
                   },
                   {
                     "action":  "block",
-                    "label": "오늘의 학식",
-                    "messageText": `오늘의 학식`,
+                    "label": "오늘의 식단(학식)",
+                    "messageText": `오늘의 식단(학식)`,
                     "blockId": `5c612b6905aaa7668df7bfc1`,
                   }
                 ]
