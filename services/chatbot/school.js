@@ -71,6 +71,7 @@ function foodParser (req, res) {
   let placeParam = (req.body.action.params.place);
   let url = 'http://m.gachon.ac.kr/menu/menu.jsp';
   let image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/art.png';
+  let foodResult;
 
   switch (placeParam) {
     case '교육대학원':
@@ -81,6 +82,10 @@ function foodParser (req, res) {
       url = 'http://m.gachon.ac.kr/menu/menu.jsp?gubun=C';
       image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/vision.png'
     break;
+    case '기숙사':
+      url = 'http://ace.gachon.ac.kr/dormitory/reference/menu#container';
+      image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/giusk.png'
+    break;
   }
 
   const day = moment().day();
@@ -90,9 +95,18 @@ function foodParser (req, res) {
           console.log(err);
           return;
       }
-      let foodResult = $(`#toggle-view > li:nth-child(${day}) > dl`).text().trim();
-      if (day === 0) {
-        foodResult = '주말에는 운영하지 않아요!';
+
+      if (placeParam === '기숙사') {
+        if (day === 0) {
+          day = 7;
+        }
+        let foodSelector = $(`#container > div.substance > div.sub_contents > table > tbody > tr:nth-child(${day})`);
+        foodResult = `${$(foodSelector).children('th').text().trim()}\n\n아침\n${$(foodSelector).children('td').first().text().trim()}\n\n점심\n${$(foodSelector).children('td').last().prev().text().trim()}\n\n저녁\n${$(foodSelector).children('td').last().prev().text().trim()}`;
+      } else {
+        foodResult = $(`#toggle-view > li:nth-child(${day}) > dl`).text().trim();
+        if (day === 0) {
+          foodResult = '주말에는 운영하지 않아요!';
+        }
       }
 
       return res.status(200).json(jsonHelper.schoolJson.sendFoodParser(foodResult, image));

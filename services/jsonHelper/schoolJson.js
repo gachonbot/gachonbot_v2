@@ -21,7 +21,7 @@ function sendFoodParser (foodResult, image) {
             {
               "action": "block",
               "label": "이전",
-              "messageText": `오늘의 학식보기`,
+              "messageText": `오늘의 식단(학식)보기`,
               "blockId": "5c612b6905aaa7668df7bfc1",
             },
             {
