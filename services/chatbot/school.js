@@ -737,6 +737,23 @@ function workParse (req, res) {
   });
 }
 
+function getUser (req, res) {
+  models.User.findOne({
+    where: {
+        bot_id: req.body.id
+    },
+  }).then(user => {
+      if (user){
+        return res.status(200).json({result: user});
+      } else {
+        return res.status(403).json({success: false, message: 'No userLog found with given kakao_id.'})
+      }
+  }).catch(function (err){
+    console.log(err.message);
+    return res.status(500).json({success: false, message: 'error'})
+  });
+}
+
 module.exports = {
     libraryRestSeat: libraryRestSeat,
     noticeParse: noticeParse,
@@ -759,4 +776,5 @@ module.exports = {
     scheduleByMonthInit2: scheduleByMonthInit2,
     scheduleByMonth: scheduleByMonth,
     workParse: workParse,
+    getUser: getUser,
 }
