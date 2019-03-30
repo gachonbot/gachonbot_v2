@@ -801,6 +801,125 @@ function getUser (req, res) {
   });
 }
 
+function getSchoolAir (req, res) {
+  const school = req.body.school;
+
+  models.Air.findOne({
+    where: {
+        school: school
+    },
+    order: [
+        // Will escape username and validate DESC against a list of valid direction parameters
+        ['id', 'DESC']
+    ]
+  }).then(air => {
+      if (air){
+        let pm10grade;
+        let pm25grade;
+        let image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/dust.jpg';
+        switch (air.grade_10) {
+          case 1:
+            pm10grade = '좋음';
+          break;
+          case 2:
+            pm10grade = '보통';
+          break;
+          case 3:
+            pm10grade = '나쁨';
+          break;
+          case 4:
+            pm10grade = '매우나쁨';
+          break;
+        }
+        switch (air.grade_25) {
+          case 1:
+            pm25grade = '좋음';
+          break;
+          case 2:
+            pm25grade = '보통';
+          break;
+          case 3:
+            pm25grade = '나쁨';
+          break;
+          case 4:
+            pm25grade = '매우나쁨';
+          break;
+        }
+          return res.status(200).json({
+            "pm10value": air.pm_10,
+            "pm25value": air.pm_25,
+            "pm10grade": pm10grade,
+            "pm25grade": pm25grade,
+          });
+      } else {
+          // Return when no data found
+          console.log(err.message);
+          return res.status(403).json({
+            "success": "false"
+          });
+      }
+  }).catch(err => {
+    console.log(err.message);
+    return res.status(500).json({
+      "success": "false"
+    });
+  });
+}
+
+
+function getSchoolWeather (req, res) {
+  const school = req.body.school;
+
+  models.Weather.findOne({
+    where: {
+        school: school
+    },
+    order: [
+        // Will escape username and validate DESC against a list of valid direction parameters
+        ['id', 'DESC']
+    ]
+  }).then(weather => {
+      console.log(weather);
+      if (weather){
+        const weatherName = weather.name;
+        let weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/weather.png';
+        switch (weatherName) {
+          case '맑음':
+            weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/sunny.jpg';
+          break;
+          case '구름조금':
+            weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/cloudy.jpg';
+          break;
+          case '구름많음':
+            weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/cloudy.jpg';
+          break;
+          case '흐림':
+            weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/foggy.jpg';
+          break;
+        }
+        if (weatherName.includes('비')) {
+          weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/rainy.jpg';
+        } else if(weatherName.includes('눈')) {
+          weatherImage = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/snowy.jpg';
+        }
+          return res.status(200).json({
+            weather: weather,
+            weatherImage: weatherImage,
+          });
+      } else {
+          console.log(err.message);
+          return res.status(403).json({
+            "success": "false"
+          });
+      }
+  }).catch(err => {
+    console.log(err.message);
+    return res.status(500).json({
+      "success": "false"
+    });
+  });
+}
+
 module.exports = {
     libraryRestSeat: libraryRestSeat,
     noticeParse: noticeParse,
@@ -824,4 +943,6 @@ module.exports = {
     scheduleByMonth: scheduleByMonth,
     workParse: workParse,
     getUser: getUser,
+    getSchoolAir: getSchoolAir,
+    getSchoolWeather: getSchoolWeather,
 }

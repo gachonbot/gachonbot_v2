@@ -38,6 +38,8 @@ router.post('/scheduleByMonthInit2', chatbot.school.scheduleByMonthInit2);
 router.post('/scheduleByMonth', chatbot.school.scheduleByMonth);
 router.post('/workParse', chatbot.school.workParse);
 router.post('/getUser', chatbot.school.getUser);
+router.post('/getSchoolAir', chatbot.school.getSchoolAir);
+router.post('/getSchoolWeather', chatbot.school.getSchoolWeather);
 /*
  * food (맛집관련)
  */
