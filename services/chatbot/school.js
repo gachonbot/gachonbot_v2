@@ -135,7 +135,7 @@ function foodParser (req, res) {
     break;
   }
 
-  const day = moment().day();
+  let day = moment().day();
 
   client.fetch(url, param, function(err, $, resp){
       if(err){
