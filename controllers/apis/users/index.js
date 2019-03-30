@@ -37,7 +37,7 @@ router.post('/scheduleByMonthInit', chatbot.school.scheduleByMonthInit);
 router.post('/scheduleByMonthInit2', chatbot.school.scheduleByMonthInit2);
 router.post('/scheduleByMonth', chatbot.school.scheduleByMonth);
 router.post('/workParse', chatbot.school.workParse);
-router.post('/getuser', chatbot.school.getuser);
+router.post('/getUser', chatbot.school.getUser);
 /*
  * food (맛집관련)
  */
