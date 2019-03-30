@@ -86,6 +86,7 @@ const Air = sequelize.define('air', {
   grade_10: Sequelize.INTEGER,
   grade_25: Sequelize.INTEGER,
   time: Sequelize.STRING,
+  school: Sequelize.STRING,
 });
 
 const Weather = sequelize.define('weather', {
@@ -100,6 +101,7 @@ const Weather = sequelize.define('weather', {
   tmax: Sequelize.FLOAT,
   humidity: Sequelize.FLOAT,
   time: Sequelize.STRING,
+  school: Sequelize.STRING,
 });
 
 const User = sequelize.define('user', {
