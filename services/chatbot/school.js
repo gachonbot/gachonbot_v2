@@ -114,6 +114,53 @@ let air_scheduler = schedule.scheduleJob('25 * * * *', function(){
       });
 });
 
+let snuWeatherScheduler = schedule.scheduleJob('5 * * * *', function(){
+  rp(`https://api2.sktelecom.com/weather/current/hourly?version=1&lat=37.460079&lon=126.952327&appkey=${process.env.WEATHER_KEY}`)
+      .then(function (response) {
+          response = JSON.parse(response);
+          response = response.weather.hourly[0];
+          models.Weather.create({
+            name: response.sky.name,
+            tc: parseFloat(response.temperature.tc),
+            tmin: parseFloat(response.temperature.tmin),
+            tmax: parseFloat(response.temperature.tmax),
+            humidity: parseFloat(response.humidity),
+            time: response.timeRelease,
+            school: '서울대',
+          }).then(result => {
+            return result;
+          }).catch(err => {
+            return err.message;
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+});
+
+let snuAirScheduler = schedule.scheduleJob('5 * * * *', function(){
+  rp(`http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey=${process.env.AIR_KEY}&numOfRows=1&pageSize=1&pageNo=1&startPage=1&stationName=${encodeURIComponent('관악구')}&dataTerm=DAILY&ver=1.3&_returnType=json`)
+      .then(function (response) {
+        response = JSON.parse(response);
+        response = response.list[0];
+        models.Air.create({
+          pm_10: parseInt(response.pm10Value),
+          pm_25: parseInt(response.pm25Value),
+          grade_10: parseInt(response.pm10Grade1h),
+          grade_25: parseInt(response.pm25Grade1h),
+          time: response.dataTime,
+          school: '서울대',
+        }).then(result => {
+          return result;
+        }).catch(err => {
+          return err.message;
+        });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+});
+
 function foodParser (req, res) {
   let placeParam = (req.body.action.params.place);
   let url = 'http://m.gachon.ac.kr/menu/menu.jsp';
