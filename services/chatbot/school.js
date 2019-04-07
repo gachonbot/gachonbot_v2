@@ -900,6 +900,7 @@ function getSchoolAir (req, res) {
             "pm10grade": pm10grade,
             "pm25grade": pm25grade,
             "image": image,
+            "time": air.time,
           });
       } else {
           // Return when no data found
