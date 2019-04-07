@@ -867,6 +867,7 @@ function getSchoolAir (req, res) {
         switch (air.grade_10) {
           case 1:
             pm10grade = '좋음';
+            image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/sunny.jpg';
           break;
           case 2:
             pm10grade = '보통';
@@ -881,6 +882,7 @@ function getSchoolAir (req, res) {
         switch (air.grade_25) {
           case 1:
             pm25grade = '좋음';
+            image = 'https://s3.ap-northeast-2.amazonaws.com/gachonbot/sunny.jpg';
           break;
           case 2:
             pm25grade = '보통';
@@ -897,6 +899,7 @@ function getSchoolAir (req, res) {
             "pm25value": air.pm_25,
             "pm10grade": pm10grade,
             "pm25grade": pm25grade,
+            "image": image,
           });
       } else {
           // Return when no data found
