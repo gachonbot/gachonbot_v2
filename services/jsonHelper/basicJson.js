@@ -77,7 +77,7 @@ function sendHomeMenu () {
                     "action":  "block",
                     "label": "오늘 뭐 먹지?",
                     "messageText": `오늘 뭐 먹지?`,
-                    "blockId": `5c700e38e821274ba78960f3`,
+                    "blockId": `5ce3b14e594f5568cf3c2b07`,
                   },
                   {
                     "action":  "block",
